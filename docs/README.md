@@ -21,6 +21,8 @@
 | 接口板 | [05-interface-board/interface-schematic.md](05-interface-board/interface-schematic.md) | 模拟+IO-Link+RS-485 三合一 |
 | Modbus | [05-interface-board/modbus-register-map.md](05-interface-board/modbus-register-map.md) | Modbus RTU 寄存器表 |
 | IO-Link | [05-interface-board/iolink-iodd-draft.md](05-interface-board/iolink-iodd-draft.md) | IO-Link 参数与 IODD 草案 |
+| 算法 | [06-algorithm/scherr-ayhan-algorithm.md](06-algorithm/scherr-ayhan-algorithm.md) | Scherr–Ayhan 组合 FFT+CZT+相位算法推导与扩展 |
+| 算法仿真 | [06-algorithm/scherr_ayhan_sim.py](06-algorithm/scherr_ayhan_sim.py) | 可运行 Python 仿真 (Monte-Carlo + CRB) |
 
 ## 当前阶段
 
