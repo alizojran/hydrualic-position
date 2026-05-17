@@ -1,0 +1,48 @@
+(footprint "PRESSURE_WINDOW_Probe"
+  (version 20240108)
+  (generator "irm_gen")
+  (layer "F.Cu")
+  (descr "Sapphire pressure window + Kovar braze + coaxial probe mechanical interface. The probe coax enters the PCB from the bottom edge through a glass-to-metal sealed SMA. This footprint marks the boundary on the PCB where the probe assembly mounts.")
+  (tags "rf mechanical irm probe sapphire")
+  (attr through_hole)
+
+  (fp_text reference "MK***" (at 0 -8) (layer "F.SilkS")
+    (effects (font (size 1.0 1.0) (thickness 0.15))))
+  (fp_text value "PRESSURE_WINDOW" (at 0 8) (layer "F.Fab")
+    (effects (font (size 1.0 1.0) (thickness 0.15))))
+
+  ; 标注 - 大圆 = 端盖外缘
+  (fp_circle (center 0 0) (end 6 0)
+    (stroke (width 0.2) (type solid)) (layer "F.SilkS"))
+  ; 中圆 = 蓝宝石窗
+  (fp_circle (center 0 0) (end 2 0)
+    (stroke (width 0.15) (type solid)) (layer "F.Fab"))
+  ; 同心圆 = 探针
+  (fp_circle (center 0 0) (end 0.3 0)
+    (stroke (width 0.1) (type solid)) (layer "F.Fab"))
+
+  ; 焊盘 1: RF 信号 (探针 → PCB SMA 焊盘)
+  (pad "1" smd roundrect
+    (at 0 0) (size 1.4 1.4) (layers "F.Cu" "F.Paste" "F.Mask")
+    (roundrect_rratio 0.25))
+
+  ; 焊盘 2: 屏蔽 / GND (端盖金属壳)
+  (pad "2" smd rect
+    (at -3.5 0) (size 1.5 6) (layers "F.Cu" "F.Paste" "F.Mask"))
+  (pad "2" smd rect
+    (at 3.5 0) (size 1.5 6) (layers "F.Cu" "F.Paste" "F.Mask"))
+
+  ; 焊盘 3, 4: 仅机械标记 (无电连接)
+  (pad "" np_thru_hole circle
+    (at -5 0) (size 1 1) (drill 0.8)
+    (layers "*.Cu" "*.Mask"))
+  (pad "" np_thru_hole circle
+    (at 5 0) (size 1 1) (drill 0.8)
+    (layers "*.Cu" "*.Mask"))
+
+  ; 文字标注 — 在 Fab 层
+  (fp_text user "Sapphire ø4×2.03mm" (at 0 4) (layer "F.Fab")
+    (effects (font (size 0.6 0.6) (thickness 0.1))))
+  (fp_text user "Probe ø0.6mm × 2.0mm" (at 0 -4) (layer "F.Fab")
+    (effects (font (size 0.6 0.6) (thickness 0.1))))
+)

@@ -1,0 +1,19 @@
+(kicad_sch
+  (version 20231120)
+  (generator "irm_gen")
+  (generator_version "8.0")
+  (uuid "0740eddb-a2ab-4729-ae19-b7c4988a475c")
+  (paper "A3")
+  (title_block
+    (title "RF Mainboard - 24 GHz FMCW Radar Transceiver")
+    (date "2026-05-17")
+    (rev "0.1-EVT")
+    (company "")
+    (comment 1 "IRM 24 GHz FMCW Hydraulic Position Sensor")
+    (comment 2 "See docs/02-rf-frontend/24ghz-schematic.md for design notes")
+  )
+  (lib_symbols)
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

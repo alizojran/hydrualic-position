@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "irm-footprints")(type "KiCad")(uri "${KIPRJMOD}/libraries/irm-footprints.pretty")(options "")(descr "IRM sensor custom footprints (pressure window, SMA edge launch, rat-race coupler)"))
+)

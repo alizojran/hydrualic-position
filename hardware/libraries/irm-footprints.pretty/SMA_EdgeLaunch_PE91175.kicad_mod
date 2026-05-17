@@ -1,0 +1,54 @@
+(footprint "SMA_EdgeLaunch_PE91175"
+  (version 20240108)
+  (generator "irm_gen")
+  (layer "F.Cu")
+  (descr "Pasternack PE91175 SMA edge-launch end-launch connector, glass-to-metal sealed. For 0.020 inch (0.51 mm) center conductor; outer ground tabs on top and bottom.")
+  (tags "rf sma edge_launch pasternack")
+  (attr smd)
+
+  (fp_text reference "J***" (at 0 -4) (layer "F.SilkS")
+    (effects (font (size 1.0 1.0) (thickness 0.15))))
+  (fp_text value "SMA_EdgeLaunch" (at 0 4) (layer "F.Fab")
+    (effects (font (size 1.0 1.0) (thickness 0.15))))
+
+  ; 边缘指示
+  (fp_line (start -3.5 -3) (end 3.5 -3)
+    (stroke (width 0.15) (type solid)) (layer "F.SilkS"))
+  (fp_line (start -3.5 3) (end 3.5 3)
+    (stroke (width 0.15) (type solid)) (layer "F.SilkS"))
+  (fp_line (start -3.5 -3) (end -3.5 3)
+    (stroke (width 0.15) (type solid)) (layer "F.SilkS"))
+
+  ; 中央信号焊盘 (Pin 1)
+  (pad "1" smd rect
+    (at 0 0) (size 2.0 0.5) (layers "F.Cu" "F.Paste" "F.Mask"))
+
+  ; GND 焊盘 (Pin 2) — 双侧夹板式
+  (pad "2" smd rect
+    (at 0 -1.5) (size 2.5 1.5) (layers "F.Cu" "F.Paste" "F.Mask"))
+  (pad "2" smd rect
+    (at 0 1.5) (size 2.5 1.5) (layers "F.Cu" "F.Paste" "F.Mask"))
+
+  ; 背面 GND
+  (pad "2" smd rect
+    (at 0 -1.5) (size 2.5 1.5) (layers "B.Cu" "B.Paste" "B.Mask"))
+  (pad "2" smd rect
+    (at 0 1.5) (size 2.5 1.5) (layers "B.Cu" "B.Paste" "B.Mask"))
+
+  ; GND 过孔围栏 (via fence, for impedance & isolation)
+  (pad "2" thru_hole circle
+    (at -1.5 -2.2) (size 0.6 0.6) (drill 0.3)
+    (layers "*.Cu" "*.Mask"))
+  (pad "2" thru_hole circle
+    (at 1.5 -2.2) (size 0.6 0.6) (drill 0.3)
+    (layers "*.Cu" "*.Mask"))
+  (pad "2" thru_hole circle
+    (at -1.5 2.2) (size 0.6 0.6) (drill 0.3)
+    (layers "*.Cu" "*.Mask"))
+  (pad "2" thru_hole circle
+    (at 1.5 2.2) (size 0.6 0.6) (drill 0.3)
+    (layers "*.Cu" "*.Mask"))
+
+  (fp_text user "PCB edge →" (at 2 0) (layer "F.Fab")
+    (effects (font (size 0.5 0.5) (thickness 0.1))))
+)

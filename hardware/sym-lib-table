@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "irm-symbols")(type "KiCad")(uri "${KIPRJMOD}/libraries/irm-symbols.kicad_sym")(options "")(descr "IRM sensor custom symbols (BGT24MTR12, L6360, etc.)"))
+)

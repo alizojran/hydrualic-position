@@ -250,6 +250,42 @@ def main() -> None:
     assert margin > 30, "余量不足 30 dB，回查链路！"
     print("PASS: 链路余量充足。")
 
+    # 油参数敏感性扫描 (供客户确认)
+    hr("油参数敏感性 — 供客户/油品供应商确认", char="*")
+    print("以下 5 项参数最终精度由客户实际用油决定。"
+          "需要从油品 MSDS 或独立测试 (24 GHz 频段) 获得：\n")
+    print(" 1) 25 °C 下的 ε_r")
+    print(" 2) 24 GHz 下的 tan δ")
+    print(" 3) dε_r/dT 温度系数")
+    print(" 4) 含水率上限 (运行期允许的最大值)")
+    print(" 5) 是否换油 / 同一台机器是否会切换油品\n")
+
+    hr("油 ε_r 不确定度 → 距离误差")
+    d_test = 1.0   # m
+    base_n = math.sqrt(2.20)
+    print(f"基准 ε_r = 2.20, n = {base_n:.4f}")
+    print(f"{'ε_r':>6} {'n':>8} {'相对距离误差':>14}")
+    for eps in [2.05, 2.10, 2.15, 2.20, 2.25, 2.30, 2.35]:
+        n = math.sqrt(eps)
+        rel_err = (n - base_n) / base_n
+        d_err_mm = rel_err * d_test * 1000
+        print(f"{eps:>6.2f} {n:>8.4f} {d_err_mm:>+11.2f} mm/m")
+
+    hr("油 tan δ → 2 m 处单程衰减")
+    print(f"{'tan δ':>10} {'α (dB/m)':>10} {'2 m 单程 (dB)':>14}")
+    for td in [3e-4, 5e-4, 8e-4, 1e-3, 1.5e-3, 3e-3, 5e-3, 1e-2]:
+        a_db = math.pi * params.f_c * td * 1.483 / C0 * 8.686
+        print(f"{td:>10.4f} {a_db:>10.2f} {a_db*2:>14.2f}")
+
+    hr("温度漂移 — 假设 dε_r/dT = -1.5e-3 / °C")
+    print(f"{'T (°C)':>8} {'ε_r':>8} {'每米距离漂移':>15}")
+    for T in [-40, -20, 0, 25, 50, 80, 105]:
+        dT = T - 25
+        eps_T = 2.20 + (-1.5e-3) * dT
+        n_T = math.sqrt(eps_T)
+        rel_err = (n_T - base_n) / base_n
+        print(f"{T:>+8d} {eps_T:>8.4f} {rel_err*1000:>+12.3f} mm/m")
+
 
 if __name__ == "__main__":
     main()

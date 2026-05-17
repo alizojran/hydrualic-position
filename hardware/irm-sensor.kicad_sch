@@ -1,0 +1,55 @@
+(kicad_sch
+  (version 20231120)
+  (generator "irm_gen")
+  (generator_version "8.0")
+  (uuid "7cc8d1e3-0379-46ce-b09e-08342d8f2d37")
+  (paper "A3")
+  (title_block
+    (title "IRM Sensor - Top")
+    (date "2026-05-17")
+    (rev "0.1-EVT")
+    (company "")
+    (comment 1 "Hierarchical design: RF mainboard + interface board")
+    (comment 2 "See docs/ for design analysis")
+  )
+  (lib_symbols)
+  (sheet
+    (at 50.8 50.8)
+    (size 50.8 30.48)
+    (fields_autoplaced yes)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid "f9a6df91-805c-484b-a211-1de5092d9fe4")
+    (property "Sheetname" "RF Mainboard"
+      (at 50.8 50.08 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom)))
+    (property "Sheetfile" "rf-mainboard.kicad_sch"
+      (at 50.8 81.92 0)
+      (effects (font (size 1.27 1.27)) (justify left top)))
+    (instances
+      (project "irm-sensor"
+        (path "/7cc8d1e3-0379-46ce-b09e-08342d8f2d37"
+          (page "2"))))
+  )
+  (sheet
+    (at 127 50.8)
+    (size 50.8 30.48)
+    (fields_autoplaced yes)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid "9a851242-fbfe-40fd-a8eb-5ad9497a4f3b")
+    (property "Sheetname" "Interface Board"
+      (at 127 50.08 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom)))
+    (property "Sheetfile" "interface-board.kicad_sch"
+      (at 127 81.92 0)
+      (effects (font (size 1.27 1.27)) (justify left top)))
+    (instances
+      (project "irm-sensor"
+        (path "/7cc8d1e3-0379-46ce-b09e-08342d8f2d37"
+          (page "3"))))
+  )
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

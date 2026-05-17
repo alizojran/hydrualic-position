@@ -1,0 +1,67 @@
+(footprint "RatRace_Coupler_24GHz"
+  (version 20240108)
+  (generator "irm_gen")
+  (layer "F.Cu")
+  (descr "180-degree rat-race hybrid coupler at 24.125 GHz on Rogers RO4350B (0.254 mm core dielectric, eps_r=3.48). Mean ring circumference = 1.5 * lambda_g. Ring radius computed from 1.5*lambda_g/(2*pi). 50 ohm impedance traces. Port 1 (sum), Port 2 (antenna), Port 3 (delta), Port 4 (isolation).")
+  (tags "rf coupler rat-race hybrid microstrip")
+  (attr smd)
+
+  (fp_text reference "BL***" (at 0 -5) (layer "F.SilkS")
+    (effects (font (size 1.0 1.0) (thickness 0.15))))
+  (fp_text value "RatRace" (at 0 5) (layer "F.Fab")
+    (effects (font (size 1.0 1.0) (thickness 0.15))))
+
+  ; 微带环 (在 F.Cu 上画为圆形)
+  ; 平均周长 = 1.5 * lambda_g_eff (RO4350B, eps_eff ~ 2.6 -> lambda_g = 12.43/sqrt(2.6) = 7.71 mm)
+  ; 1.5 * 7.71 = 11.57 mm -> r = 1.84 mm
+  ; 实际工程上会用方角矩形环或八边形, 这里简化为圆环
+  (fp_circle (center 0 0) (end 1.84 0)
+    (stroke (width 0.46) (type solid)) (layer "F.Cu"))
+
+  ; 四个端口 (按 90° 间隔，参考 BGT24MTR12 datasheet 中标准 rat-race 配置)
+  ; Pin 1: TX 端 (0°)
+  (pad "1" smd rect
+    (at 2.5 0) (size 0.46 0.46) (layers "F.Cu" "F.Paste" "F.Mask"))
+  ; Pin 2: ANT (90°)
+  (pad "2" smd rect
+    (at 0 2.5) (size 0.46 0.46) (layers "F.Cu" "F.Paste" "F.Mask"))
+  ; Pin 3: RX (180°)
+  (pad "3" smd rect
+    (at -2.5 0) (size 0.46 0.46) (layers "F.Cu" "F.Paste" "F.Mask"))
+  ; Pin 4: TERM 50Ω (270°)
+  (pad "4" smd rect
+    (at 0 -2.5) (size 0.46 0.46) (layers "F.Cu" "F.Paste" "F.Mask"))
+
+  ; 连接 pad 到环
+  (fp_line (start 2.5 0) (end 1.84 0)
+    (stroke (width 0.46) (type solid)) (layer "F.Cu"))
+  (fp_line (start 0 2.5) (end 0 1.84)
+    (stroke (width 0.46) (type solid)) (layer "F.Cu"))
+  (fp_line (start -2.5 0) (end -1.84 0)
+    (stroke (width 0.46) (type solid)) (layer "F.Cu"))
+  (fp_line (start 0 -2.5) (end 0 -1.84)
+    (stroke (width 0.46) (type solid)) (layer "F.Cu"))
+
+  ; 接地围栏过孔 (around the ring)
+  (pad "GND" thru_hole circle (at 4 0) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at 4 4) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at 0 4) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at -4 4) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at -4 0) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at -4 -4) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at 0 -4) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+  (pad "GND" thru_hole circle (at 4 -4) (size 0.5 0.5) (drill 0.3) (layers "*.Cu" "*.Mask"))
+
+  ; 文字标注
+  (fp_text user "TX" (at 3.2 0.7) (layer "F.SilkS")
+    (effects (font (size 0.6 0.6) (thickness 0.1))))
+  (fp_text user "ANT" (at 0 3.2) (layer "F.SilkS")
+    (effects (font (size 0.6 0.6) (thickness 0.1))))
+  (fp_text user "RX" (at -3.2 0.7) (layer "F.SilkS")
+    (effects (font (size 0.6 0.6) (thickness 0.1))))
+  (fp_text user "TERM" (at 0 -3.2) (layer "F.SilkS")
+    (effects (font (size 0.6 0.6) (thickness 0.1))))
+
+  (fp_text user "tune in HFSS" (at 0 0) (layer "F.Fab")
+    (effects (font (size 0.4 0.4) (thickness 0.1))))
+)

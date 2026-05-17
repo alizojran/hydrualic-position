@@ -1,0 +1,23 @@
+# KiCad 自动生成的文件
+*.bak
+*.kicad_pro-bak
+*-backups/
+*.kicad_prl
+fp-info-cache
+
+# KiCad 临时
+_autosave-*
+*.000
+*.net~
+
+# 网表 / BOM 生成产物 (脚本可重生, 不入库)
+build/
+
+# 制造输出
+gerbers/
+*.gbr
+*.drl
+
+# Python 缓存
+__pycache__/
+*.pyc
