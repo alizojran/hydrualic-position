@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  File   : ILC_Visu.xml
+  用途   : CODESYS Visualization 蓝图,4 页 HMI 设计
+  绑定源 : PRG_FullWorkflow.stHMI_*  (来自 FB_HMI_Bridge 输出)
+  分辨率 : 1024 x 768 (标准 4:3 工控触屏)
+
+  使用方法:
+   1. 在 CODESYS 工程中新建 Visualization
+   2. 按本 XML 中元素的 Type / Position / Properties / Bindings 逐项创建
+   3. Bindings 中 PLC 变量路径完整且大小写正确,直接复制粘贴可用
+   4. 配色已选用工业 HMI 通用配色(深底+饱和色),无需修改
+
+  元素类型映射(本XML → CODESYS Visu Toolbox):
+   Label          → 静态文本 / 标签
+   Button         → 按钮(OnMouseClick → ST_HMI_Commands 写入)
+   Lamp           → 灯指示器(根据布尔变量改色)
+   Bargraph       → 条形进度条
+   Gauge          → 圆形仪表盘
+   NumericDisplay → 数值显示(只读)
+   NumericInput   → 数值输入(可写)
+   ComboBox       → 下拉选择(整型枚举)
+   TrendChart     → 趋势曲线(数组→折线)
+   Table          → 多列表格(数组绑定)
+   AlarmStrip     → 报警横幅
+  ============================================================
+-->
+<VisuPackage name="ILC_HMI" version="1.0" resolution="1024x768">
+
+  <!-- 全局调色板 -->
+  <Palette>
+    <Color name="bg"          value="#1E1E1E"/>
+    <Color name="panel"       value="#2D2D30"/>
+    <Color name="text"        value="#E0E0E0"/>
+    <Color name="textDim"     value="#909090"/>
+    <Color name="accent"      value="#00A8FF"/>
+    <Color name="ok"          value="#00C853"/>
+    <Color name="warn"        value="#FFAB00"/>
+    <Color name="fault"       value="#FF3D00"/>
+    <Color name="border"      value="#3F3F46"/>
+    <Color name="trendRms"    value="#00BFFF"/>
+    <Color name="trendSync"   value="#FF8C00"/>
+    <Color name="trendPeak"   value="#FF6B9D"/>
+  </Palette>
+
+  <!-- 状态机文本映射 -->
+  <EnumDisplay enum="E_ILC_State">
+    <Map value="0" text="IDLE"      color="#909090"/>
+    <Map value="1" text="WARMUP"    color="#FFAB00"/>
+    <Map value="2" text="LEARNING"  color="#00A8FF"/>
+    <Map value="3" text="CONVERGED" color="#00C853"/>
+    <Map value="4" text="FAULT"     color="#FF3D00"/>
+  </EnumDisplay>
+  <EnumDisplay enum="E_ILC_CouplingMode">
+    <Map value="0" text="独立工件"/>
+    <Map value="1" text="刚性同步"/>
+    <Map value="2" text="并联机构"/>
+  </EnumDisplay>
+
+  <!-- 共享导航栏(每页顶部)-->
+  <Component name="TopNav">
+    <Background color="#palette.panel"/>
+    <Elements>
+      <Element type="Label" id="lblTitle">
+        <Position x="20" y="10" width="400" height="30"/>
+        <Text>多缸ILC交叉耦合同步控制</Text>
+        <Font size="18" bold="true" color="#palette.text"/>
+      </Element>
+      <Element type="Button" id="btnPage1">
+        <Position x="500" y="10" width="100" height="30"/>
+        <Text>总览</Text>
+        <Action type="SwitchVisualization" target="Page1_Overview"/>
+      </Element>
+      <Element type="Button" id="btnPage2">
+        <Position x="610" y="10" width="100" height="30"/>
+        <Text>趋势</Text>
+        <Action type="SwitchVisualization" target="Page2_Trends"/>
+      </Element>
+      <Element type="Button" id="btnPage3">
+        <Position x="720" y="10" width="100" height="30"/>
+        <Text>缸级明细</Text>
+        <Action type="SwitchVisualization" target="Page3_Channels"/>
+      </Element>
+      <Element type="Button" id="btnPage4">
+        <Position x="830" y="10" width="100" height="30"/>
+        <Text>整定</Text>
+        <Action type="SwitchVisualization" target="Page4_Tuning"/>
+      </Element>
+      <Element type="Label" id="lblIter">
+        <Position x="940" y="15" width="70" height="20"/>
+        <Text>周期: {value}</Text>
+        <Binding variable="PRG_FullWorkflow.stHMI_System.iIteration" format="%d"/>
+        <Font size="12" color="#palette.textDim"/>
+      </Element>
+    </Elements>
+  </Component>
+
+  <!-- ============================================================
+       PAGE 1: 总览
+       ============================================================ -->
+  <Visualization name="Page1_Overview" width="1024" height="768">
+    <Background color="#palette.bg"/>
+    <Include component="TopNav"/>
+
+    <!-- 状态指示灯 -->
+    <Element type="Rectangle" id="panelState">
+      <Position x="20" y="60" width="300" height="120"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label" id="lblStateTitle">
+      <Position x="30" y="65" width="200" height="20"/>
+      <Text>状态机</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="Lamp" id="lampState">
+      <Position x="30" y="90" width="60" height="60"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_System.eState"/>
+      <EnumDisplay ref="E_ILC_State"/>
+      <Shape>circle</Shape>
+    </Element>
+    <Element type="Label" id="lblStateText">
+      <Position x="100" y="100" width="200" height="40"/>
+      <Text>{value}</Text>
+      <Binding variable="PRG_FullWorkflow.stHMI_System.eState" enumRef="E_ILC_State"/>
+      <Font size="22" bold="true" color="#palette.text"/>
+    </Element>
+
+    <!-- 跟踪误差仪表盘 -->
+    <Element type="Gauge" id="gaugeTrackRms">
+      <Position x="340" y="60" width="200" height="200"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+      <Title>跟踪 RMS (mm)</Title>
+      <Range min="0" max="5"/>
+      <ColorZones>
+        <Zone min="0"   max="0.1" color="#palette.ok"/>
+        <Zone min="0.1" max="0.5" color="#palette.warn"/>
+        <Zone min="0.5" max="5"   color="#palette.fault"/>
+      </ColorZones>
+      <Binding variable="PRG_FullWorkflow.stHMI_Metrics.rGlobalRmsErr"/>
+      <Format>%.3f</Format>
+    </Element>
+
+    <!-- 同步误差仪表盘 -->
+    <Element type="Gauge" id="gaugeSyncErr">
+      <Position x="560" y="60" width="200" height="200"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+      <Title>同步误差峰值 (mm)</Title>
+      <Range min="0" max="2"/>
+      <ColorZones>
+        <Zone min="0"   max="0.1" color="#palette.ok"/>
+        <Zone min="0.1" max="0.5" color="#palette.warn"/>
+        <Zone min="0.5" max="2"   color="#palette.fault"/>
+      </ColorZones>
+      <Binding variable="PRG_FullWorkflow.stHMI_Metrics.rMaxSyncErr"/>
+      <Format>%.3f</Format>
+    </Element>
+
+    <!-- 工况信息卡片 -->
+    <Element type="Rectangle" id="panelInfo">
+      <Position x="780" y="60" width="220" height="200"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="790" y="70" width="200" height="20"/>
+      <Text>缸数</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="790" y="90" width="200" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_System.iNumCylinders"/>
+      <Format>%d</Format>
+      <Font size="22" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="790" y="125" width="200" height="20"/>
+      <Text>采样点/周期</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="790" y="145" width="200" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_System.iPointsPerCycle"/>
+      <Font size="20" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="790" y="180" width="200" height="20"/>
+      <Text>耦合模式</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="ComboBox" id="cboMode">
+      <Position x="790" y="205" width="200" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_System.eCouplingMode" mode="readonly"/>
+      <EnumDisplay ref="E_ILC_CouplingMode"/>
+    </Element>
+
+    <!-- 主控按钮区 -->
+    <Element type="Rectangle">
+      <Position x="20" y="280" width="980" height="120"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="285" width="200" height="20"/>
+      <Text>主控</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="Button" id="btnEnable">
+      <Position x="40" y="315" width="140" height="60"/>
+      <Text>启动 ILC</Text>
+      <Background color="#palette.ok"/>
+      <Font size="16" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdEnable" value="TRUE"/>
+    </Element>
+    <Element type="Button" id="btnReset">
+      <Position x="200" y="315" width="140" height="60"/>
+      <Text>复位重学习</Text>
+      <Background color="#palette.accent"/>
+      <Font size="16" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdReset" value="TRUE"/>
+    </Element>
+    <Element type="Button" id="btnEStop">
+      <Position x="820" y="315" width="160" height="60"/>
+      <Text>急停</Text>
+      <Background color="#palette.fault"/>
+      <Font size="20" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdEStop" value="TRUE"/>
+    </Element>
+
+    <!-- 报警栏 -->
+    <Element type="Rectangle" id="panelAlarm">
+      <Position x="20" y="420" width="980" height="80"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="425" width="200" height="20"/>
+      <Text>报警</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="Lamp" id="lampAlmFault">
+      <Position x="30" y="450" width="20" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Alarms.bAlmFault"/>
+      <ColorOn color="#palette.fault"/>
+      <ColorOff color="#3F3F46"/>
+      <Blink when="true" intervalMs="500"/>
+    </Element>
+    <Element type="Lamp" id="lampAlmSync">
+      <Position x="55" y="450" width="20" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Alarms.bAlmSyncExceeded"/>
+      <ColorOn color="#palette.warn"/>
+      <ColorOff color="#3F3F46"/>
+    </Element>
+    <Element type="Lamp" id="lampAlmChannel">
+      <Position x="80" y="450" width="20" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Alarms.bAlmChannelDown"/>
+      <ColorOn color="#palette.warn"/>
+      <ColorOff color="#3F3F46"/>
+    </Element>
+    <Element type="Label" id="lblAlmText">
+      <Position x="110" y="445" width="860" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Alarms.sActiveAlarmText"/>
+      <Font size="14" color="#palette.warn"/>
+      <Visibility expr="not stHMI_Alarms.sActiveAlarmText.Empty"/>
+    </Element>
+
+    <!-- 收敛进度迷你条 -->
+    <Element type="Label">
+      <Position x="20" y="520" width="200" height="20"/>
+      <Text>峰值跟踪误差(实时)</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="Bargraph" id="barPeakErr">
+      <Position x="20" y="545" width="600" height="40"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Metrics.rMaxTrackErr"/>
+      <Range min="0" max="2"/>
+      <ColorZones>
+        <Zone min="0"   max="0.1" color="#palette.ok"/>
+        <Zone min="0.1" max="0.5" color="#palette.warn"/>
+        <Zone min="0.5" max="2"   color="#palette.fault"/>
+      </ColorZones>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="640" y="545" width="120" height="40"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Metrics.rMaxTrackErr"/>
+      <Format>%.3f mm</Format>
+      <Font size="16" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="780" y="545" width="220" height="40"/>
+      <Text>最差缸: #{value}</Text>
+      <Binding variable="PRG_FullWorkflow.stHMI_Metrics.rWorstCyl_Track"/>
+      <Font size="16" color="#palette.textDim"/>
+    </Element>
+  </Visualization>
+
+  <!-- ============================================================
+       PAGE 2: 趋势曲线
+       ============================================================ -->
+  <Visualization name="Page2_Trends" width="1024" height="768">
+    <Background color="#palette.bg"/>
+    <Include component="TopNav"/>
+
+    <!-- 跟踪 RMS 趋势 -->
+    <Element type="Rectangle">
+      <Position x="20" y="60" width="980" height="220"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="65" width="400" height="20"/>
+      <Text>跟踪 RMS 误差(随周期)</Text>
+      <Font size="14" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="TrendChart" id="trendRms">
+      <Position x="30" y="90" width="960" height="180"/>
+      <Background color="#181818"/>
+      <Series>
+        <Data variable="PRG_FullWorkflow.stHMI_Trend.aRmsTrend"
+              indexHead="PRG_FullWorkflow.stHMI_Trend.iTrendHead"
+              count="PRG_FullWorkflow.stHMI_Trend.iTrendCount"
+              capacity="64"/>
+        <Line color="#palette.trendRms" thickness="2"/>
+        <Label>跟踪RMS</Label>
+      </Series>
+      <YAxis min="0" max="auto" label="mm"/>
+      <XAxis label="周期" reverseTime="true"/>
+      <GridColor>#303030</GridColor>
+    </Element>
+
+    <!-- 同步误差趋势 -->
+    <Element type="Rectangle">
+      <Position x="20" y="290" width="980" height="220"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="295" width="400" height="20"/>
+      <Text>同步误差峰值(随周期)</Text>
+      <Font size="14" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="TrendChart" id="trendSync">
+      <Position x="30" y="320" width="960" height="180"/>
+      <Background color="#181818"/>
+      <Series>
+        <Data variable="PRG_FullWorkflow.stHMI_Trend.aSyncTrend"
+              indexHead="PRG_FullWorkflow.stHMI_Trend.iTrendHead"
+              count="PRG_FullWorkflow.stHMI_Trend.iTrendCount"
+              capacity="64"/>
+        <Line color="#palette.trendSync" thickness="2"/>
+        <Label>同步误差</Label>
+      </Series>
+      <YAxis min="0" max="auto" label="mm"/>
+      <XAxis label="周期" reverseTime="true"/>
+      <GridColor>#303030</GridColor>
+    </Element>
+
+    <!-- 跟踪峰值趋势 -->
+    <Element type="Rectangle">
+      <Position x="20" y="520" width="980" height="220"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="525" width="400" height="20"/>
+      <Text>跟踪误差峰值(随周期)</Text>
+      <Font size="14" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="TrendChart" id="trendPeak">
+      <Position x="30" y="550" width="960" height="180"/>
+      <Background color="#181818"/>
+      <Series>
+        <Data variable="PRG_FullWorkflow.stHMI_Trend.aPeakTrend"
+              indexHead="PRG_FullWorkflow.stHMI_Trend.iTrendHead"
+              count="PRG_FullWorkflow.stHMI_Trend.iTrendCount"
+              capacity="64"/>
+        <Line color="#palette.trendPeak" thickness="2"/>
+        <Label>跟踪峰值</Label>
+      </Series>
+      <YAxis min="0" max="auto" label="mm"/>
+      <XAxis label="周期" reverseTime="true"/>
+      <GridColor>#303030</GridColor>
+    </Element>
+  </Visualization>
+
+  <!-- ============================================================
+       PAGE 3: 缸级明细表格
+       ============================================================ -->
+  <Visualization name="Page3_Channels" width="1024" height="768">
+    <Background color="#palette.bg"/>
+    <Include component="TopNav"/>
+
+    <Element type="Label">
+      <Position x="20" y="60" width="500" height="30"/>
+      <Text>逐缸状态明细</Text>
+      <Font size="16" bold="true" color="#palette.text"/>
+    </Element>
+
+    <Element type="Table" id="tblChannels">
+      <Position x="20" y="100" width="980" height="640"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+      <RowSource>
+        <Array variable="PRG_FullWorkflow.fbILC.aChannelStats"
+               count="PRG_FullWorkflow.stHMI_System.iNumCylinders"
+               startIndex="1"/>
+      </RowSource>
+      <HeaderColor>#3F3F46</HeaderColor>
+      <RowColorEven>#252526</RowColorEven>
+      <RowColorOdd>#2D2D30</RowColorOdd>
+      <Font size="14" color="#palette.text"/>
+      <Columns>
+        <Column id="colNum" width="80" align="center">
+          <Header>缸号</Header>
+          <Cell>{rowIndex}</Cell>
+        </Column>
+        <Column id="colEnable" width="80" align="center">
+          <Header>使能</Header>
+          <Cell type="Lamp" bind="PRG_FullWorkflow.aChEnable[{rowIndex}]"
+                colorOn="#palette.ok" colorOff="#palette.textDim"/>
+        </Column>
+        <Column id="colRmsTrack" width="160" align="right">
+          <Header>跟踪RMS (mm)</Header>
+          <Cell bind="row.rRmsTrackError" format="%.4f"/>
+        </Column>
+        <Column id="colPeakTrack" width="160" align="right">
+          <Header>跟踪峰值 (mm)</Header>
+          <Cell bind="row.rPeakTrackError" format="%.4f"/>
+        </Column>
+        <Column id="colRmsSync" width="160" align="right">
+          <Header>同步RMS (mm)</Header>
+          <Cell bind="row.rRmsSyncError" format="%.4f"/>
+        </Column>
+        <Column id="colMaxFF" width="160" align="right">
+          <Header>FF最大 (mm)</Header>
+          <Cell bind="row.rMaxFF" format="%.3f"/>
+        </Column>
+        <Column id="colHealth" width="160" align="center">
+          <Header>健康</Header>
+          <Cell type="Lamp" bind="row.bChannelOK"
+                colorOn="#palette.ok" colorOff="#palette.fault"/>
+        </Column>
+      </Columns>
+    </Element>
+  </Visualization>
+
+  <!-- ============================================================
+       PAGE 4: 参数整定
+       ============================================================ -->
+  <Visualization name="Page4_Tuning" width="1024" height="768">
+    <Background color="#palette.bg"/>
+    <Include component="TopNav"/>
+
+    <!-- 相位超前自整定 面板 -->
+    <Element type="Rectangle">
+      <Position x="20" y="60" width="480" height="320"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="70" width="400" height="25"/>
+      <Text>相位超前自整定</Text>
+      <Font size="16" bold="true" color="#palette.accent"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="100" width="440" height="20"/>
+      <Text>对单缸施加阶跃,自动估计ILC的相位补偿</Text>
+      <Font size="11" color="#palette.textDim"/>
+    </Element>
+    <Element type="Button">
+      <Position x="30" y="135" width="200" height="50"/>
+      <Text>启动相位整定</Text>
+      <Background color="#palette.accent"/>
+      <Font size="14" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdStartPhaseTune" value="TRUE"/>
+    </Element>
+    <Element type="Button">
+      <Position x="240" y="135" width="120" height="50"/>
+      <Text>中止</Text>
+      <Background color="#palette.fault"/>
+      <Font size="14" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdAbortPhaseTune" value="TRUE"/>
+    </Element>
+
+    <Element type="Label">
+      <Position x="30" y="200" width="200" height="20"/>
+      <Text>估计纯延迟 Td (ms)</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="240" y="200" width="200" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.rEstDelay_s" multiplier="1000"/>
+      <Format>%.1f ms</Format>
+      <Font size="14" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="225" width="200" height="20"/>
+      <Text>估计主时间常数 Tv (ms)</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="240" y="225" width="200" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.rEstTau_s" multiplier="1000"/>
+      <Format>%.1f ms</Format>
+      <Font size="14" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="250" width="200" height="20"/>
+      <Text>推荐相位超前 (采样点)</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="240" y="250" width="200" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.iPhaseLead_FromTuner"/>
+      <Format>%d</Format>
+      <Font size="14" bold="true" color="#palette.ok"/>
+    </Element>
+
+    <Element type="Lamp">
+      <Position x="30" y="290" width="20" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.bPhaseTuneDone"/>
+      <ColorOn color="#palette.ok"/>
+      <ColorOff color="#3F3F46"/>
+    </Element>
+    <Element type="Label">
+      <Position x="60" y="290" width="400" height="20"/>
+      <Text>整定完成,已自动应用</Text>
+      <Visibility bind="PRG_FullWorkflow.stHMI_Tuning.bPhaseTuneDone"/>
+      <Font size="12" color="#palette.ok"/>
+    </Element>
+
+    <!-- 离线参数辨识 面板 -->
+    <Element type="Rectangle">
+      <Position x="520" y="60" width="480" height="320"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="530" y="70" width="400" height="25"/>
+      <Text>L / λ / α 离线辨识</Text>
+      <Font size="16" bold="true" color="#palette.accent"/>
+    </Element>
+    <Element type="Label">
+      <Position x="530" y="100" width="440" height="20"/>
+      <Text>跑满 30 周期后触发,根据历史数据回推推荐参数</Text>
+      <Font size="11" color="#palette.textDim"/>
+    </Element>
+    <Element type="Button">
+      <Position x="530" y="135" width="200" height="50"/>
+      <Text>启动参数辨识</Text>
+      <Background color="#palette.accent"/>
+      <Font size="14" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdEstimateParams" value="TRUE"/>
+    </Element>
+    <Element type="Button">
+      <Position x="740" y="135" width="200" height="50"/>
+      <Text>应用推荐值</Text>
+      <Background color="#palette.ok"/>
+      <Font size="14" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdApplyParams" value="TRUE"/>
+      <Enabled bind="PRG_FullWorkflow.stHMI_Tuning.bParamEstimateDone"/>
+    </Element>
+
+    <!-- 推荐值显示 -->
+    <Element type="Label">
+      <Position x="530" y="200" width="100" height="20"/>
+      <Text>L 推荐</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="640" y="200" width="100" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.rL_Recommended"/>
+      <Format>%.3f</Format>
+      <Font size="14" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="530" y="225" width="100" height="20"/>
+      <Text>λ 推荐</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="640" y="225" width="100" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.rLambda_Recommended"/>
+      <Format>%.3f</Format>
+      <Font size="14" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="530" y="250" width="100" height="20"/>
+      <Text>α 推荐</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="NumericDisplay">
+      <Position x="640" y="250" width="100" height="20"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.rAlpha_Recommended"/>
+      <Format>%.4f</Format>
+      <Font size="14" bold="true" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="530" y="275" width="100" height="20"/>
+      <Text>置信度</Text>
+      <Font size="12" color="#palette.textDim"/>
+    </Element>
+    <Element type="Bargraph">
+      <Position x="640" y="278" width="200" height="14"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Tuning.rOverallConfidence"/>
+      <Range min="0" max="1"/>
+      <ColorZones>
+        <Zone min="0"   max="0.5" color="#palette.fault"/>
+        <Zone min="0.5" max="0.8" color="#palette.warn"/>
+        <Zone min="0.8" max="1.0" color="#palette.ok"/>
+      </ColorZones>
+    </Element>
+
+    <Element type="Label">
+      <Position x="530" y="300" width="460" height="60"/>
+      <Text>L: {sReasonL}&#10;λ: {sReasonLambda}&#10;α: {sReasonAlpha}</Text>
+      <Binding variables="PRG_FullWorkflow.stHMI_Tuning.sReasonL,sReasonLambda,sReasonAlpha"/>
+      <Font size="10" color="#palette.textDim"/>
+      <WordWrap>true</WordWrap>
+    </Element>
+
+    <!-- 手动覆盖参数 面板 -->
+    <Element type="Rectangle">
+      <Position x="20" y="400" width="980" height="340"/>
+      <Background color="#palette.panel"/>
+      <Border color="#palette.border" width="1"/>
+    </Element>
+    <Element type="Label">
+      <Position x="30" y="410" width="400" height="25"/>
+      <Text>手动覆盖参数</Text>
+      <Font size="16" bold="true" color="#palette.accent"/>
+    </Element>
+
+    <Element type="Label">
+      <Position x="30" y="450" width="120" height="30"/>
+      <Text>L (学习增益)</Text>
+      <Font size="13" color="#palette.text"/>
+    </Element>
+    <Element type="NumericInput">
+      <Position x="160" y="450" width="160" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Cmd.rL_Manual" mode="readwrite"/>
+      <Format>%.3f</Format>
+      <Range min="0.05" max="0.6"/>
+      <Font size="14" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="330" y="450" width="300" height="30"/>
+      <Text>范围 0.05~0.6,典型值 0.2~0.3</Text>
+      <Font size="11" color="#palette.textDim"/>
+    </Element>
+
+    <Element type="Label">
+      <Position x="30" y="490" width="120" height="30"/>
+      <Text>λ (同步耦合)</Text>
+      <Font size="13" color="#palette.text"/>
+    </Element>
+    <Element type="NumericInput">
+      <Position x="160" y="490" width="160" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Cmd.rLambda_Manual" mode="readwrite"/>
+      <Format>%.3f</Format>
+      <Range min="0.0" max="1.0"/>
+      <Font size="14" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="330" y="490" width="500" height="30"/>
+      <Text>0=独立,0.5~0.8=刚性同步,>0.8=强耦合</Text>
+      <Font size="11" color="#palette.textDim"/>
+    </Element>
+
+    <Element type="Label">
+      <Position x="30" y="530" width="120" height="30"/>
+      <Text>α (遗忘因子)</Text>
+      <Font size="13" color="#palette.text"/>
+    </Element>
+    <Element type="NumericInput">
+      <Position x="160" y="530" width="160" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Cmd.rAlpha_Manual" mode="readwrite"/>
+      <Format>%.4f</Format>
+      <Range min="0.85" max="0.999"/>
+      <Font size="14" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="330" y="530" width="500" height="30"/>
+      <Text>越高越接近纯ILC;低重复性场景宜用 0.95~0.97</Text>
+      <Font size="11" color="#palette.textDim"/>
+    </Element>
+
+    <Element type="Label">
+      <Position x="30" y="570" width="120" height="30"/>
+      <Text>FF 限幅 (mm)</Text>
+      <Font size="13" color="#palette.text"/>
+    </Element>
+    <Element type="NumericInput">
+      <Position x="160" y="570" width="160" height="30"/>
+      <Binding variable="PRG_FullWorkflow.stHMI_Cmd.rFF_Limit_Manual" mode="readwrite"/>
+      <Format>%.2f</Format>
+      <Range min="0.1" max="20.0"/>
+      <Font size="14" color="#palette.text"/>
+    </Element>
+    <Element type="Label">
+      <Position x="330" y="570" width="500" height="30"/>
+      <Text>前馈幅值上限,推荐设为满量程的 5%~10%</Text>
+      <Font size="11" color="#palette.textDim"/>
+    </Element>
+
+    <Element type="Button">
+      <Position x="30" y="650" width="240" height="60"/>
+      <Text>应用手动参数</Text>
+      <Background color="#palette.warn"/>
+      <Font size="16" bold="true" color="#FFFFFF"/>
+      <Action type="WriteBoolean" variable="PRG_FullWorkflow.stHMI_Cmd.bCmdApplyManual" value="TRUE"/>
+      <ConfirmDialog>应用手动参数将复位 ILC 学习,确认?</ConfirmDialog>
+    </Element>
+
+  </Visualization>
+
+</VisuPackage>

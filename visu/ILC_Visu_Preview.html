@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ILC 多缸同步控制 HMI 预览</title>
+<style>
+  :root {
+    --bg: #1E1E1E;
+    --panel: #2D2D30;
+    --text: #E0E0E0;
+    --textDim: #909090;
+    --accent: #00A8FF;
+    --ok: #00C853;
+    --warn: #FFAB00;
+    --fault: #FF3D00;
+    --border: #3F3F46;
+    --trendRms: #00BFFF;
+    --trendSync: #FF8C00;
+    --trendPeak: #FF6B9D;
+  }
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 14px;
+  }
+  .frame { width: 1024px; height: 768px; margin: 20px auto; position: relative;
+           border: 2px solid var(--border); border-radius: 4px; overflow: hidden;
+           background: var(--bg); }
+  .topnav { position: absolute; left: 0; top: 0; width: 1024px; height: 50px;
+            background: var(--panel); border-bottom: 1px solid var(--border); }
+  .title { position: absolute; left: 20px; top: 10px; font-size: 18px; font-weight: bold; }
+  .pagebtn { position: absolute; top: 10px; width: 100px; height: 30px;
+             background: #404040; border: 1px solid var(--border); color: var(--text);
+             border-radius: 3px; cursor: pointer; }
+  .pagebtn.active { background: var(--accent); }
+  .iterlabel { position: absolute; right: 20px; top: 15px; color: var(--textDim); font-size: 12px; }
+  .page { position: absolute; left: 0; top: 50px; width: 1024px; height: 718px; display: none; }
+  .page.active { display: block; }
+  .panel { position: absolute; background: var(--panel); border: 1px solid var(--border); }
+  .label { position: absolute; color: var(--textDim); font-size: 12px; }
+  .label.big { color: var(--text); font-size: 14px; font-weight: bold; }
+  .value { position: absolute; color: var(--text); font-weight: bold; }
+
+  /* Gauge */
+  .gauge { position: absolute; display: flex; flex-direction: column; align-items: center;
+           justify-content: center; }
+  .gauge-title { color: var(--textDim); font-size: 12px; margin-bottom: 8px; }
+  .gauge-arc { position: relative; width: 140px; height: 80px; }
+  .gauge-arc svg { width: 100%; height: 100%; }
+  .gauge-val { font-size: 22px; font-weight: bold; color: var(--text); margin-top: -10px; }
+
+  /* Lamp */
+  .lamp { position: absolute; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+  .lamp.ok    { background: var(--ok); color: var(--ok); }
+  .lamp.warn  { background: var(--warn); color: var(--warn); }
+  .lamp.fault { background: var(--fault); color: var(--fault); animation: blink 0.5s infinite; }
+  .lamp.off   { background: #3F3F46; color: #3F3F46; box-shadow: none; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  /* Button */
+  .btn { position: absolute; border: none; color: white; font-weight: bold;
+         cursor: pointer; border-radius: 4px; }
+  .btn:hover { filter: brightness(1.15); }
+  .btn.primary { background: var(--accent); }
+  .btn.ok      { background: var(--ok); }
+  .btn.warn    { background: var(--warn); }
+  .btn.fault   { background: var(--fault); }
+
+  /* Bargraph */
+  .bar { position: absolute; background: #181818; overflow: hidden; }
+  .bar-fill { height: 100%; transition: width 0.3s; }
+
+  /* Trend */
+  .trend { position: absolute; background: #181818; border: 1px solid var(--border); }
+  .trend svg { width: 100%; height: 100%; }
+
+  /* Table */
+  table.tbl { position: absolute; border-collapse: collapse; }
+  table.tbl th { background: #3F3F46; padding: 8px; font-weight: bold; }
+  table.tbl td { padding: 6px 8px; text-align: right; }
+  table.tbl tr:nth-child(odd) td { background: #2D2D30; }
+  table.tbl tr:nth-child(even) td { background: #252526; }
+
+  /* Numeric input */
+  .num-input { position: absolute; background: #181818; color: var(--text);
+               border: 1px solid var(--border); padding: 4px 8px; font-size: 14px; }
+  .alarm-text { color: var(--warn); font-size: 14px; }
+  .reason-box { color: var(--textDim); font-size: 11px; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div style="text-align:center; margin: 20px 0; color: var(--textDim);">
+  CODESYS Visu 预览 - ILC 多缸同步控制 HMI(1024×768)
+  &nbsp;|&nbsp;
+  对应蓝图: visu/ILC_Visu.xml
+  &nbsp;|&nbsp;
+  数据源: PRG_FullWorkflow.stHMI_*
+</div>
+
+<div class="frame">
+  <!-- ============================== 顶部导航 ============================== -->
+  <div class="topnav">
+    <div class="title">多缸 ILC 交叉耦合同步控制</div>
+    <button class="pagebtn active" id="nav1" style="left:500px" onclick="showPage(1)">总览</button>
+    <button class="pagebtn" id="nav2" style="left:610px" onclick="showPage(2)">趋势</button>
+    <button class="pagebtn" id="nav3" style="left:720px" onclick="showPage(3)">缸级明细</button>
+    <button class="pagebtn" id="nav4" style="left:830px" onclick="showPage(4)">整定</button>
+    <div class="iterlabel">周期: <span id="iterCount">128</span></div>
+  </div>
+
+  <!-- ============================== PAGE 1: 总览 ============================== -->
+  <div class="page active" id="page1">
+
+    <!-- 状态指示 -->
+    <div class="panel" style="left:20px; top:10px; width:300px; height:120px;"></div>
+    <div class="label" style="left:30px; top:15px;">状态机</div>
+    <div class="lamp ok" style="left:30px; top:40px; width:60px; height:60px;"></div>
+    <div class="value" style="left:100px; top:50px; font-size:22px; color:var(--ok);">LEARNING</div>
+
+    <!-- 跟踪 RMS 仪表盘 -->
+    <div class="panel" style="left:340px; top:10px; width:200px; height:200px;"></div>
+    <div class="gauge" style="left:340px; top:10px; width:200px; height:200px;">
+      <div class="gauge-title">跟踪 RMS (mm)</div>
+      <div class="gauge-arc">
+        <svg viewBox="0 0 200 110">
+          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#3F3F46" stroke-width="12"/>
+          <path d="M 20 100 A 80 80 0 0 1 60 32"   fill="none" stroke="#00C853" stroke-width="12"/>
+          <path d="M 60 32 A 80 80 0 0 1 100 20"   fill="none" stroke="#FFAB00" stroke-width="12"/>
+          <line x1="100" y1="100" x2="55" y2="40" stroke="#E0E0E0" stroke-width="3"/>
+          <circle cx="100" cy="100" r="4" fill="#E0E0E0"/>
+        </svg>
+      </div>
+      <div class="gauge-val">0.087</div>
+    </div>
+
+    <!-- 同步误差仪表盘 -->
+    <div class="panel" style="left:560px; top:10px; width:200px; height:200px;"></div>
+    <div class="gauge" style="left:560px; top:10px; width:200px; height:200px;">
+      <div class="gauge-title">同步误差峰值 (mm)</div>
+      <div class="gauge-arc">
+        <svg viewBox="0 0 200 110">
+          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#3F3F46" stroke-width="12"/>
+          <path d="M 20 100 A 80 80 0 0 1 80 25"   fill="none" stroke="#00C853" stroke-width="12"/>
+          <line x1="100" y1="100" x2="50" y2="55" stroke="#E0E0E0" stroke-width="3"/>
+          <circle cx="100" cy="100" r="4" fill="#E0E0E0"/>
+        </svg>
+      </div>
+      <div class="gauge-val">0.042</div>
+    </div>
+
+    <!-- 工况信息卡 -->
+    <div class="panel" style="left:780px; top:10px; width:220px; height:200px;"></div>
+    <div class="label" style="left:790px; top:20px;">缸数</div>
+    <div class="value" style="left:790px; top:38px; font-size:22px;">3</div>
+    <div class="label" style="left:790px; top:75px;">采样点/周期</div>
+    <div class="value" style="left:790px; top:93px; font-size:20px;">1000</div>
+    <div class="label" style="left:790px; top:130px;">耦合模式</div>
+    <div class="num-input" style="left:790px; top:155px; width:185px; height:18px;
+                                  background:#181818; padding:6px 8px;">刚性同步 ▼</div>
+
+    <!-- 主控按钮区 -->
+    <div class="panel" style="left:20px; top:230px; width:980px; height:120px;"></div>
+    <div class="label" style="left:30px; top:235px;">主控</div>
+    <button class="btn ok"     style="left:40px;  top:265px; width:140px; height:60px; font-size:16px;">启动 ILC</button>
+    <button class="btn primary" style="left:200px; top:265px; width:140px; height:60px; font-size:16px;">复位重学习</button>
+    <button class="btn fault"  style="left:820px; top:265px; width:160px; height:60px; font-size:20px;">急停</button>
+
+    <!-- 报警栏 -->
+    <div class="panel" style="left:20px; top:370px; width:980px; height:80px;"></div>
+    <div class="label" style="left:30px; top:375px;">报警</div>
+    <div class="lamp off" style="left:30px; top:400px; width:20px; height:20px;"></div>
+    <div class="lamp off" style="left:55px; top:400px; width:20px; height:20px;"></div>
+    <div class="lamp off" style="left:80px; top:400px; width:20px; height:20px;"></div>
+    <div class="alarm-text" style="position:absolute; left:110px; top:395px;">系统运行正常</div>
+
+    <!-- 峰值跟踪误差实时条 -->
+    <div class="label" style="left:20px; top:470px;">峰值跟踪误差(实时)</div>
+    <div class="bar" style="left:20px; top:495px; width:600px; height:40px;">
+      <div class="bar-fill" style="width:18%; background:var(--ok);"></div>
+    </div>
+    <div class="value" style="left:640px; top:498px; font-size:16px;">0.124 mm</div>
+    <div style="position:absolute; left:780px; top:498px; color:var(--textDim); font-size:16px;">最差缸: #2</div>
+
+  </div>
+
+  <!-- ============================== PAGE 2: 趋势 ============================== -->
+  <div class="page" id="page2">
+    <!-- Trend 1: 跟踪 RMS -->
+    <div class="panel" style="left:20px; top:10px; width:980px; height:220px;"></div>
+    <div class="label big" style="left:30px; top:15px;">跟踪 RMS 误差(随周期)</div>
+    <div class="trend" style="left:30px; top:40px; width:960px; height:180px;">
+      <svg viewBox="0 0 960 180" preserveAspectRatio="none">
+        <!-- 网格 -->
+        <g stroke="#303030" stroke-width="0.5">
+          <line x1="0" y1="36" x2="960" y2="36"/>
+          <line x1="0" y1="72" x2="960" y2="72"/>
+          <line x1="0" y1="108" x2="960" y2="108"/>
+          <line x1="0" y1="144" x2="960" y2="144"/>
+        </g>
+        <!-- 衰减曲线 -->
+        <polyline fill="none" stroke="#00BFFF" stroke-width="2"
+          points="0,5 30,8 60,18 90,40 120,70 150,95 180,115 210,128 240,138 270,145 300,150 330,153 360,155 390,156 420,157 450,158 480,159 510,159 540,160 570,160 600,160 630,160 660,160 690,160 720,160 750,160 780,160 810,160 840,160 870,160 900,160 930,160 960,160"/>
+        <text x="940" y="15" fill="#909090" font-size="10">0.0</text>
+        <text x="940" y="170" fill="#909090" font-size="10">2.5mm</text>
+      </svg>
+    </div>
+
+    <!-- Trend 2: 同步误差 -->
+    <div class="panel" style="left:20px; top:240px; width:980px; height:220px;"></div>
+    <div class="label big" style="left:30px; top:245px;">同步误差峰值(随周期)</div>
+    <div class="trend" style="left:30px; top:270px; width:960px; height:180px;">
+      <svg viewBox="0 0 960 180" preserveAspectRatio="none">
+        <g stroke="#303030" stroke-width="0.5">
+          <line x1="0" y1="36" x2="960" y2="36"/>
+          <line x1="0" y1="72" x2="960" y2="72"/>
+          <line x1="0" y1="108" x2="960" y2="108"/>
+          <line x1="0" y1="144" x2="960" y2="144"/>
+        </g>
+        <polyline fill="none" stroke="#FF8C00" stroke-width="2"
+          points="0,15 30,18 60,30 90,55 120,75 150,98 180,118 210,130 240,140 270,148 300,152 330,154 360,156 390,157 420,158 450,158 480,159 510,159 540,159 570,160 600,160 630,160 660,160 690,160 720,160 750,160 780,160 810,160 840,160 870,160 900,160 930,160 960,160"/>
+      </svg>
+    </div>
+
+    <!-- Trend 3: 跟踪峰值 -->
+    <div class="panel" style="left:20px; top:470px; width:980px; height:220px;"></div>
+    <div class="label big" style="left:30px; top:475px;">跟踪误差峰值(随周期)</div>
+    <div class="trend" style="left:30px; top:500px; width:960px; height:180px;">
+      <svg viewBox="0 0 960 180" preserveAspectRatio="none">
+        <g stroke="#303030" stroke-width="0.5">
+          <line x1="0" y1="36" x2="960" y2="36"/>
+          <line x1="0" y1="72" x2="960" y2="72"/>
+          <line x1="0" y1="108" x2="960" y2="108"/>
+          <line x1="0" y1="144" x2="960" y2="144"/>
+        </g>
+        <polyline fill="none" stroke="#FF6B9D" stroke-width="2"
+          points="0,8 30,12 60,22 90,45 120,72 150,98 180,118 210,130 240,140 270,146 300,150 330,153 360,155 390,156 420,157 450,158 480,158 510,159 540,159 570,159 600,160 630,160 660,160 690,160 720,160 750,160 780,160 810,160 840,160 870,160 900,160 930,160 960,160"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ============================== PAGE 3: 缸级明细 ============================== -->
+  <div class="page" id="page3">
+    <div class="label big" style="left:20px; top:10px; font-size:16px;">逐缸状态明细</div>
+    <table class="tbl" style="left:20px; top:50px; width:980px;">
+      <thead>
+        <tr>
+          <th style="width:80px;">缸号</th>
+          <th style="width:80px;">使能</th>
+          <th style="width:160px;">跟踪RMS (mm)</th>
+          <th style="width:160px;">跟踪峰值 (mm)</th>
+          <th style="width:160px;">同步RMS (mm)</th>
+          <th style="width:160px;">FF最大 (mm)</th>
+          <th style="width:160px;">健康</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><span class="lamp ok" style="position:relative; display:inline-block; width:14px; height:14px;"></span></td><td>0.072</td><td>0.103</td><td>0.038</td><td>0.81</td><td><span class="lamp ok" style="position:relative; display:inline-block; width:14px; height:14px;"></span></td></tr>
+        <tr><td>2</td><td><span class="lamp ok" style="position:relative; display:inline-block; width:14px; height:14px;"></span></td><td>0.095</td><td>0.124</td><td>0.042</td><td>1.05</td><td><span class="lamp ok" style="position:relative; display:inline-block; width:14px; height:14px;"></span></td></tr>
+        <tr><td>3</td><td><span class="lamp ok" style="position:relative; display:inline-block; width:14px; height:14px;"></span></td><td>0.085</td><td>0.118</td><td>0.040</td><td>0.93</td><td><span class="lamp ok" style="position:relative; display:inline-block; width:14px; height:14px;"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================== PAGE 4: 整定 ============================== -->
+  <div class="page" id="page4">
+
+    <!-- 相位整定面板 -->
+    <div class="panel" style="left:20px; top:10px; width:480px; height:320px;"></div>
+    <div style="position:absolute; left:30px; top:20px; font-size:16px; font-weight:bold; color:var(--accent);">相位超前自整定</div>
+    <div style="position:absolute; left:30px; top:50px; color:var(--textDim); font-size:11px;">对单缸施加阶跃,自动估计ILC的相位补偿</div>
+    <button class="btn primary" style="left:30px; top:85px; width:200px; height:50px; font-size:14px;">启动相位整定</button>
+    <button class="btn fault"   style="left:240px; top:85px; width:120px; height:50px; font-size:14px;">中止</button>
+
+    <div class="label" style="left:30px; top:150px;">估计纯延迟 Td (ms)</div>
+    <div class="value" style="left:240px; top:148px; font-size:14px;">5.2 ms</div>
+    <div class="label" style="left:30px; top:175px;">估计主时间常数 Tv (ms)</div>
+    <div class="value" style="left:240px; top:173px; font-size:14px;">9.8 ms</div>
+    <div class="label" style="left:30px; top:200px;">推荐相位超前 (采样点)</div>
+    <div class="value" style="left:240px; top:198px; font-size:14px; color:var(--ok);">12</div>
+
+    <div class="lamp ok" style="left:30px; top:240px; width:20px; height:20px;"></div>
+    <div style="position:absolute; left:60px; top:240px; color:var(--ok); font-size:12px;">整定完成,已自动应用</div>
+
+    <!-- 参数辨识面板 -->
+    <div class="panel" style="left:520px; top:10px; width:480px; height:320px;"></div>
+    <div style="position:absolute; left:530px; top:20px; font-size:16px; font-weight:bold; color:var(--accent);">L / λ / α 离线辨识</div>
+    <div style="position:absolute; left:530px; top:50px; color:var(--textDim); font-size:11px;">跑满 30 周期后触发,根据历史数据回推推荐参数</div>
+    <button class="btn primary" style="left:530px; top:85px; width:200px; height:50px; font-size:14px;">启动参数辨识</button>
+    <button class="btn ok"      style="left:740px; top:85px; width:200px; height:50px; font-size:14px;">应用推荐值</button>
+
+    <div class="label" style="left:530px; top:150px;">L 推荐</div>
+    <div class="value" style="left:640px; top:148px; font-size:14px;">0.247</div>
+    <div class="label" style="left:530px; top:175px;">λ 推荐</div>
+    <div class="value" style="left:640px; top:173px; font-size:14px;">0.620</div>
+    <div class="label" style="left:530px; top:200px;">α 推荐</div>
+    <div class="value" style="left:640px; top:198px; font-size:14px;">0.9876</div>
+    <div class="label" style="left:530px; top:225px;">置信度</div>
+    <div class="bar" style="left:640px; top:228px; width:200px; height:14px;">
+      <div class="bar-fill" style="width:85%; background:var(--ok);"></div>
+    </div>
+
+    <div class="reason-box" style="position:absolute; left:530px; top:250px; width:460px;">
+      L: Decay rate near target. Minor tweak.<br>
+      λ: Sync error large. Increase lambda.<br>
+      α: High repeatability. Keep alpha high.
+    </div>
+
+    <!-- 手动覆盖参数 面板 -->
+    <div class="panel" style="left:20px; top:350px; width:980px; height:340px;"></div>
+    <div style="position:absolute; left:30px; top:360px; font-size:16px; font-weight:bold; color:var(--accent);">手动覆盖参数</div>
+
+    <div class="label" style="left:30px; top:400px; color:var(--text); font-size:13px;">L (学习增益)</div>
+    <input type="text" value="0.300" class="num-input" style="left:160px; top:400px; width:140px; height:18px;">
+    <div class="label" style="left:330px; top:402px;">范围 0.05~0.6,典型值 0.2~0.3</div>
+
+    <div class="label" style="left:30px; top:440px; color:var(--text); font-size:13px;">λ (同步耦合)</div>
+    <input type="text" value="0.500" class="num-input" style="left:160px; top:440px; width:140px; height:18px;">
+    <div class="label" style="left:330px; top:442px;">0=独立,0.5~0.8=刚性同步,>0.8=强耦合</div>
+
+    <div class="label" style="left:30px; top:480px; color:var(--text); font-size:13px;">α (遗忘因子)</div>
+    <input type="text" value="0.9800" class="num-input" style="left:160px; top:480px; width:140px; height:18px;">
+    <div class="label" style="left:330px; top:482px;">越高越接近纯ILC;低重复性场景宜用 0.95~0.97</div>
+
+    <div class="label" style="left:30px; top:520px; color:var(--text); font-size:13px;">FF 限幅 (mm)</div>
+    <input type="text" value="5.00" class="num-input" style="left:160px; top:520px; width:140px; height:18px;">
+    <div class="label" style="left:330px; top:522px;">前馈幅值上限,推荐设为满量程的 5%~10%</div>
+
+    <button class="btn warn" style="left:30px; top:600px; width:240px; height:60px; font-size:16px;">应用手动参数</button>
+
+  </div>
+
+</div>
+
+<script>
+  function showPage(n) {
+    for (var i = 1; i <= 4; i++) {
+      document.getElementById('page' + i).classList.remove('active');
+      document.getElementById('nav' + i).classList.remove('active');
+    }
+    document.getElementById('page' + n).classList.add('active');
+    document.getElementById('nav' + n).classList.add('active');
+  }
+
+  // Simulate iteration counter
+  let iter = 128;
+  setInterval(() => {
+    iter++;
+    document.getElementById('iterCount').textContent = iter;
+  }, 1000);
+</script>
+</body>
+</html>
