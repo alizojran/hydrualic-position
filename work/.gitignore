@@ -1,0 +1,5 @@
+# Regenerable artifacts (recreated by extract.py / build_docx.py)
+img/
+*.pdf
+*.docx
+__pycache__/
