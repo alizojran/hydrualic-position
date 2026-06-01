@@ -1,0 +1,525 @@
+[
+ {
+  "type": "title",
+  "text": "High-Accuracy Range Detection Radar Sensor for Hydraulic Cylinders"
+ },
+ {
+  "type": "authors",
+  "text": "Serdal Ayhan, Member, IEEE, Steffen Scherr, Member, IEEE, Philipp Pahl, Member, IEEE, Thorsten Kayser,\nMario Pauli, Member, IEEE, and Thomas Zwick, Senior Member, IEEE"
+ },
+ {
+  "type": "abstract",
+  "text": "Industrial automation requires highly precise distance measurement sensors. Accurate detection of the piston position is indispensable for the control and monitoring of hydraulic cylinder applications. Known external and integrated solutions are subject to many limitations as for example in accuracy, in measurement length, or in price. A promising approach consists in the use of precise and low-cost radar sensors. The developed K-band frequency modulated continuous wave (FMCW) radar system in this paper detects the piston position in a hydraulic cylinder based on the guided propagation of a radar signal. The dielectric characteristics of the hydraulic oil are obtained for this purpose by permittivity measurement methods. Inﬂuences of the hydraulic oil on wave propagation in cylindrical waveguides as well as mechanical requirements associated with this new approach are investigated. The design of an adapted oil- and pressure-resistant transition between the radar sensor and the hydraulic cylinder and a novel calibration method will be described and veriﬁed under real measurement conditions. At a measurement repetition rate of 2 kHz, an accuracy of well below 200 µm was achieved for a hydraulic cylinder of 1 m in length."
+ },
+ {
+  "type": "indexterms",
+  "text": "FMCW radar, absolute range detection, high accuracy, industrial application, permittivity measurement, oil-ﬁlled waveguide, waveguide transition, waveguide taper."
+ },
+ {
+  "type": "note",
+  "text": "Manuscript received September 2, 2013; revised October 14, 2013; accepted October 21, 2013. Date of publication October 31, 2013; date of current version January 7, 2014. This work was supported by the Federal Ministry of Economy and Technology, Germany in the context of a cooperation project. The associate editor coordinating the review of this paper and approving it for publication was Prof. Francis P. Hindle. The authors are with the Institut für Hochfrequenztechnik und Elektronik, Karlsruhe Institute of Technology, Karlsruhe 76131, Germany (e-mail: serdal.ayhan@kit.edu; steffen.scherr@kit.edu; philipp.pahl@kit.edu; thorsten.kayser@kit.edu; mario.pauli@kit.edu; thomas.zwick@kit.edu). Color versions of one or more of the ﬁgures in this paper are available online at http://ieeexplore.ieee.org. Digital Object Identiﬁer 10.1109/JSEN.2013.2287638 1530-437X © 2013 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "I",
+  "text": "INTRODUCTION"
+ },
+ {
+  "type": "para",
+  "text": "I N HYDRAULIC applications e.g. for automation purposes, hydraulic shovels or construction machines, distance information, or the exact position of the piston is required for controlling purposes. Numerous distance measurement sensors based on various techniques are available for industrial applications. In particular for hydraulic cylinders leading sensor solutions are based on magnetostriction or foucault current measurement principles. Both solutions are contactless and can be installed directly in the pressurized volume of the cylinder. However, their scope of application is restricted by the resolution, dynamic limitations, and high costs. Low-cost external magnetostrictive sensors are more sensitive to environmental inﬂuences and lead to an increasing mounting cost"
+ },
+ {
+  "type": "figure",
+  "num": "1",
+  "caption": "Measurement setup for radar-based range measurement in a hydraulic cylinder.",
+  "img": "img_journal/figure_1.png"
+ },
+ {
+  "type": "para",
+  "text": "with trouble-shooting becoming more complicated [1], [2]. Other measurement principles of high accuracy, such as laser or glass scale sensors, do not allow absolute measurements, unless time-consuming, and hence, costly calibration processes are conducted. Consequently, highly accurate, environmentally insensitive sensor solutions that are not subject to any abrasion are in high demand. The presented microwave radar sensor concept allows range detection in hydraulic cylinders with micrometer (μm) precision, a high measurement repetition rate, high integration level, and absolute distance measurement in ﬂuids or gases. Another advantage is the wide use of radar technology, e.g. in the automotive sector for driver assistance systems, which facilitates the development of comparatively low-cost sensors [3], [4]. The approach of using the radar principle in a waveguide accounts also for the limited bandwidth (B) of industrial radar applications set by regulatory authorities for telecommunications [5]– [7]. However, a high B results in a high precision of position detection and can be used, if a complete RF-resistant shielding cover exists. The realized prototype measurement setup with a hydraulic cylinder of 1 m length and completely integrated radar sensor in the cylinder housing achieves this requirement, see Fig. 1. Other typical examples of enclosed radar applications are level measurements in RF-resistant formed tanks. However, existing radar sensors do not reach the required accuracy or measurement repetition rate [8]–[11]. This paper is organized as follows. Section II brieﬂy describes the novel radar processing for the requirements in the hydraulic cylinder application. Section III introduces the basic concept of the integrated radar sensor. The design aspects in context to propagation characteristics of the radar signal in the hydraulic oil and hardware requirements for integration of the sensor in the hydraulic cylinder will be evaluated in sections IV and V, respectively. Measurement results and their analysis will be given in section VI. Finally, this paper is concluded in section VII."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "II",
+  "text": "RADAR RANGE DETECTION"
+ },
+ {
+  "type": "para",
+  "text": "The fundamental principle of radar-based range measurement is the evaluation of the radar signal propagation time, when the signal is reﬂected from a speciﬁc target. If a measurement takes place in the hydraulic cylinder a good radar system choice is the FMCW radar (Frequency Modulated Continuous Wave) [12]. In an FMCW radar the transmit signal ftx is a linear frequency modulated waveform which sweeps the frequency starting from fmin over the bandwidth B within one cycle duration T [13]. The rate of frequency sweep is B termed as chirp rate indicated by k (where k = T )."
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p1_L_289.png"
+ },
+ {
+  "type": "para",
+  "text": "In the absence of target motion, the received signal frx is simply a delayed version of the transmitted signal with the delay in time denoted by τ = 2R c where R is the target range and c is the propagation speed in a given medium."
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p1_L_364.png"
+ },
+ {
+  "type": "para",
+  "text": "The transmit signal and received signal are multiplied in a mixer to generate a sum component and a difference component. The sum component is low-pass ﬁltered and the remaining difference component also called as the beat signal is used to extract the target range information. This beat signal with reduced acquisition demand can be evaluated by frequency fb (3) and phase ϕb (4):"
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p1_L_476.png"
+ },
+ {
+  "type": "para",
+  "text": "By a proper setting of the FMCW parameter (considering HW-limitations), millimeter (mm) accuracy can be achieved over a large distance only using the frequency information [14]–[16]. Still, accuracy in the μm range is technically not feasible. Combining both, frequency and phase analysis, a high range accuracy as well as a large unambiguous range can be achieved, as it is described by the authors in [17]. The ﬁne detection of the position is realized by dividing the entire range into segments in the order of the unambiguous phase range Runamb = λmin (λmin = half the wavelength of fmin; fmin = 23.5 GHz, λmin ≈3.5 mm) and calculating the phase difference in the segment. Frequency evaluation is used as coarse detection to identify the segment number and phase evaluation is used for correction of the estimated position, i.e. for precise range detection. The absoulte range Rcoarse and the attainable correction factor \u0006Rcorr are:"
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p1_L_705.png"
+ },
+ {
+  "type": "para",
+  "text": "The combined frequency and phase evaluation technique implemented here, is characterized by both low hardware and low computational requirements. However, for the phase evaluation the accuracy achieved with the frequency method has to be better than Runamb to prevent segment misalignments resulting in high range deviations. Other phase-based methods for accuracy improvement in FMCW radars are associated with complex hardware designs or high computational effort as well as restrictions for real-time applications [18], [19]. Since radar bandwidth B, sweep time T and signal propagation speed c are constant, the accuracy of target estimation is mainly dependent on its beat frequency estimation (see (5)). There are two main approaches for handling the frequency estimation problem. The ﬁrst is the non parametric approach which is easy to implement and requires no signal information prior to frequency estimation. The most commonly used methods are the zero padded Fast Fourier Transform (FFT) [19] with high computational time and high memory demand and the interpolated FFT as described e.g. in [20] with insufﬁcient accuracy. A more efﬁcient method is the Chirp-Z-Transform (CZT) also called zoom FFT which provides high accuracy and real-time capability [21]. The second parametric approach includes model based methods like ESPRIT, MUSIC etc. For these methods it is mandatory to know certain signal information (i.e. number of sinusoids) prior to the frequency estimation. If this condition is sufﬁced, the parametric methods provide frequency estimation accuracy which is several times better than the accuracy achieved with non parametric methods depending on the signal-to-noise ratio (SNR). However, if a low SNR is available or the assumed number of sinusoids prior to frequency estimation mismatches with the actual signal model then, the parametric method performance is severely limited [22]. In this application the radar signals are guided in a waveguide due to the integration into the hydraulic cylinder. Use of waveguides theoretically results in a one-target scenario, which is given by the ﬂat reﬂection point at the bottom of the drilled piston in the hydraulic cylinder (section III). However, due to non-ideal transitions in the hardware, e.g. between the radar sensor and the waveguide feeding or the radar target and the calibration target (section VI) multiple superimposed reﬂections occur. The presence of the resulting peaks of varying amplitude impede the determination of the exact number of sinusoids present in the beat signal. The unknown number of sinusoids prior to frequency estimation and the estimated SNR of approximately 30 dB of the used FMCW-radar pose a limitation on the usage of parametric methods (see section VI). However, the radar performance in this application is rather inﬂuenced by additonal refelctions than by SNR or white Gaussian noise respectively. Therefore, an increased SNR by averaging is restricted. The mentioned frequency estimation methods for the FMCW radar are compared in [23] amongst themselves and also with respect to an absolute limit provided by the Cramer Rao Lower Bound (CRLB) which serves as a benchmark for every estimation process depending on the SNR. In consideration of the hydraulic cylinder application the CZT algorithm is well suited and implemented in this work. The required"
+ },
+ {
+  "type": "figure",
+  "num": "2",
+  "caption": "Schematic sensor concept for two arbitary positions with distance d1 and d2.",
+  "img": "img_journal/figure_2.png"
+ },
+ {
+  "type": "para",
+  "text": "accuracy for the phase evaluation is met with minimal computational effort in comparison to the investigated methods and the combination principle is successfully veriﬁed using an air-ﬁlled waveguide. Here, the limiting criterions for the measurement environment in oil and especially in the hydraulic cylinder are investigated in the following chapters."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "III",
+  "text": "RADAR FOR HYDRAULIC CYLINDER"
+ },
+ {
+  "type": "para",
+  "text": "The new sensor approach for the detection of the piston position in hydraulic cylinders is based on evaluating the reﬂected guided electromagnetic wave in a circular waveguide. Fig. 2 shows the schematic representation of the sensor concept for two arbitary positions within the cylinder. The whole setup consists of two waveguide sections, the feeding circular waveguide (W1) and the drill hole in the piston that also acts as a waveguide (W2). The reﬂection point or the target for radar measurements is the bottom of the drilled piston W2. The radar signal is fed into the drill hole using W1 with a smaller diameter to ensure the telescoped movement and changing position for range detection. The diameter difference between W1 and W2 results in different wave impedances and propagation velocities, respectively in an additional reﬂection point for the radar signal. This reﬂection at a ﬁxed known position in the system is useful for calibration purposes and required for the measurement principle combining coarse and ﬁne detection of the position by frequency and phase evaluation. Calibration for changing propagation conditions, e.g. different oils or temperatures can be carried out during each measurement by determination of the reﬂection at this transition with a gating procedure. Additionally, absolute measurements are possible due to the known length of W1. The calibration target is set as starting point, from which the phase unambiguous ranges are counted. The radar principle implicitly requires sufﬁcient range resolution to detect both targets with the desired high accuracy. Therefore, limitations have to be considered during the design process (section V-C)."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "IV",
+  "text": "CHARACTERIZATION OF OIL PERMITTIVITY USED IN HYDRAULIC CYLINDERS"
+ },
+ {
+  "type": "para",
+  "text": "The propagation characteristics of electromagnetic (EM) waves in oil-ﬁlled waveguides are signiﬁcant for the radar"
+ },
+ {
+  "type": "figure",
+  "num": "3",
+  "caption": "Coaxial probe measurement method. (a) Measurement setup. (b) Measurement concept.",
+  "img": "img_journal/figure_3.png"
+ },
+ {
+  "type": "para",
+  "text": "sensor. For the intended sensor application the speciﬁed oil “Esso Nuto H46” is used, a standard oil for hydraulic cylinders. Especially the dielectric characteristics of the hydraulic oil at high frequencies will inﬂuence the propagation behavior of the radar signals. A large attenuation or multimode propagation will impede the propagation of radar signals and therefore degrade the radar performance. The complex dielectric permittivity ε = ε′ r −jε′′ r of oil is determined in a frequency range from 22 GHz to 26 GHz, for temperatures between −40 °C to +105 °C. There are several approaches for the complex permittivity measurement of liquid materials [24]–[26]. In this work three independent approaches are investigated and combined to achieve most reliable results: the coaxial probe measurement, the resonance cavity measurement, and the transmission line measurement principle."
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "A",
+  "text": "Coaxial Probe Measurement (CPM)"
+ },
+ {
+  "type": "para",
+  "text": "The ﬁrst approach is a broadband measurement method with a coaxial probe, which is slightly immersed into the liquid (see Fig. 3). The variation of the reﬂection coefﬁcient S11 due to the inﬂuence of the liquid on the electric ﬁeld is used to determine the complex εr. The scattering parameters are measured with a Network Analyzer (NWA) using the Agilent 85070E Dielectric Probe [27]. In Fig. 4 the measurement results are shown separately for ε′ r and ε′′ r . The permittivity ε′ r at the FMCW-radar center frequency of 24 GHz is approximately 2.4 for room temperature. In a temperature range from −40 °C to +105 °C, a deviation of 0.2 is measured. The dielectric loss ε′′ r exhibits a stronger dependency on temperature. The loss tangent tan δ = ε′′ r /ε′ r is about 0.05. The resulting attenuation α for a TEM wave, according to [28] of 169 dB/m is evaluated using (7)."
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p2_R_644.png"
+ },
+ {
+  "type": "para",
+  "text": "It has to be mentioned that the loss factor expected in oil is much lower than the measured value, which is the result of the limited probe sensitivity for low loss materials [27]. Therefore, the resonance cavity measurement method is investigated to decrease the uncertainty in attenuation and to verify the evaluated permittivity."
+ },
+ {
+  "type": "figure",
+  "num": "4",
+  "caption": "Complex oil permittivity versus frequency measured by the CPM method. (a) Real part ε′r. (b) Imaginary part ε′′r .",
+  "img": "img_journal/figure_4.png"
+ },
+ {
+  "type": "figure",
+  "num": "5",
+  "caption": "Exemplary coaxial resonant cavity setup and schematic structure of the resonant cavity measurement method. (a) Exemplary resonant cavity. (b) Measurement concept.",
+  "img": "img_journal/figure_5.png"
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "B",
+  "text": "Resonance Cavity Measurement (RCM)"
+ },
+ {
+  "type": "para",
+  "text": "For the RCM method, the oil is ﬁlled into a coaxial resonantor cavity (see Fig. 5). Due to the inﬂuence of the dielectric liquid on the resonator, the resonance frequency of the resonator varies compared to the empty cavity. The permittivity ε′ r is investigated by the ratio between the resonant frequency fres,air in the air-ﬁlled cavity and the resonant frequency fres,oil in the oil-ﬁlled cavity:"
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p3_L_691.png"
+ },
+ {
+  "type": "para",
+  "text": "The measured 3 dB-bandwidth B−3d B,oil and the resonant frequency fres,oil of oil the loss tangent tanδoil and the dielectric Transmission coefﬁcient S21 versus frequency measured by the RCM"
+ },
+ {
+  "type": "figure",
+  "num": "6",
+  "caption": "Transmission coefﬁcient S21 versus frequency measured by the RCM method for different cavities. (a) Cavity 1 measurement results. (b) Cavity 2 measurement results.",
+  "img": "img_journal/figure_6.png"
+ },
+ {
+  "type": "para",
+  "text": "ε′′ r can be determined [28] by the following equations:"
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p3_R_446.png"
+ },
+ {
+  "type": "para",
+  "text": "The results measured for two different cavities are shown in Fig. 6. The solid lines represent the oil-ﬁlled cavity and the dashed lines the air-ﬁlled cavity. In cavity 1 a resonant frequency is given for the oil-ﬁlled cavity at about 7.7 GHz, whereas two resonant frequencies at approximately 7.9 GHz and 19.8 GHz are measured in cavity 2. Using (8), (9) and (10), the complex permittivity and dielectric loss tangents listed in table I are calculated. The attenuation based on (7) is between 9.0 dB/m and 38.5 dB/m. The ε′ r value corresponds to that of the CPM method and the low value for ε′′ r is more accurate, but only evaluated at the resonance frequency or a multiple of the resonance frequency. However, the measured value of the permittivity ε′ r is veriﬁed and the following transmission line method is used to determine the attenuation."
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "C",
+  "text": "Transmission Line Measurement (TLM)"
+ },
+ {
+  "type": "para",
+  "text": "The realized TLM approach (see Fig. 7) uses an oil-ﬁlled waveguide with 0.5 m in length and the transmission between the input and output is measured using a NWA, as it is done in [29]. Measurements over the full bandwidth can be"
+ },
+ {
+  "type": "table",
+  "num": "I",
+  "caption": "RCM METHOD MEASUREMENT RESULTS",
+  "img": "img_journal/table_I.png"
+ },
+ {
+  "type": "figure",
+  "num": "7",
+  "caption": "Schematic representation of the transmission line method using an oil-ﬁlled waveguide for permittivity measurement.",
+  "img": "img_journal/figure_7.png"
+ },
+ {
+  "type": "para",
+  "text": "NWA measurement results for S11 and S21 in an oil-ﬁlled waveguide."
+ },
+ {
+  "type": "figure",
+  "num": "8",
+  "caption": "NWA measurement results for S11 and S21 in an oil-ﬁlled waveguide.",
+  "img": "img_journal/figure_8.png"
+ },
+ {
+  "type": "para",
+  "text": "performed, if multi-mode propagation is avoided. However, the attenuation is inﬂuenced by input and output reﬂections as well as by losses in the waveguide, e.g. wall currents, which result in ripples in the measurement results for the reﬂection S11 (solid line) and transmission S21 (dashed line), shown in Fig. 8. The measured attenuation of the transmission is approximately 8 dB. To verify the propagation in oil, a best-case and worst-case estimation is made. The worst-case estimation provides the average of the measured value for the transmission, including line losses and the mismatch. The attenuation coefﬁcient related to the line length is between 14 dB/m and 18 dB/m. Taking the mismatch into account by adding the reﬂection to the transmission, the attenuation coefﬁcient is between 9 dB/m and 10.5 dB/m, which is comparable with the results obtained by the RCM method."
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "D",
+  "text": "Conclusion of the Oil Permittivity Evaluation"
+ },
+ {
+  "type": "para",
+  "text": "Considering the measurement results for ε′ r, an oil permittivity in the range of 2.0 to 2.5 can be expected over the temperature range from −40 °C up to +105 °C. The ε′ r range is veriﬁed by two independent measurement principles (CPM/RCM method). The temperature inﬂuence is negligible in all measurements. However, measurement errors cannot be excluded at temperatures below 0 °C due to icing effects and above +80 °C due to gassing effects of oil."
+ },
+ {
+  "type": "para",
+  "text": "In addition to the analysis of pure oil also samples with contaminated oil with e.g. various water contents using sodium lauryl sulphate (SLS) as emulsiﬁer were investigated to indicate the real scenario in a hydraulic cylinder. The contaminated oil exhibits an increased permittivity value with increased water content. However, the necessary homogeneity of the oilwater composition was disturbed due to a partial to a complete decomposition at high temperatures. Therefore, these results were affected either by the oil or the water component. The investigation of other oils was not carried out due to the speciﬁed and given type of oil for the hydraulic cylinder. The dielectric oil losses are marginal and consequently result in ambiguous ε′′ r and attenuation values. The CPM principle leads to an unrealistic high attenuation of 169 dB/m. For comparison, the RCM yields attenuation values between 9.0 dB/m and 38.5 dB/m which are 4.5 to 18 times smaller than the values obtained with the broadband CPM method. However, only discrete frequency points are evaluated. For further investigation, the attenuation is obtained directly from the measured transmission of the waves in oil by using a completely ﬁlled waveguide. The measured attenuation coefﬁcient is in the range of 10 dB/m, which is in agreement with the RCM method. It is also comparable with literature values for other oils [30], [31]. The attenuation for radar signals in the frequency range between 22 GHz and 26 GHz can be assumed to be approximately 10 dB/m. Therefore, radar distance measurements appear feasible in a hydraulic cylinder."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "V",
+  "text": "SYSTEM ANALYSIS"
+ },
+ {
+  "type": "para",
+  "text": "The permittivity measurements of oil justify the further investigation of the system. In particular the following aspects are absolutely necessary to analyze the propagation characteristics of the radar signal • to evaluate waveguide modes, dispersion, and propagation velocity for radar data processing • to dimension the waveguide, and • to develop the waveguide aperture. The critical parameter for the system analysis is the waveguide dimension, which mainly depends on mechanical boundary conditions besides of EM-wave propagation characteristics. The drilling procedure in the piston (W2) is state of the art and already employed for sensors mentioned in section I. However, the realizable drill diameters are mechanically limited in length. Therefore, the speciﬁcations for the drill hole are prediﬁned. The feeding waveguide W1 requires a certain length to achieve a sufﬁcient range resolution and range accuracy (see section II) due to the multiple reﬂection scenario given by the feeding concept and the radar target at the bottom of W2. Moreover the wall thickness of W1 is decisive for the stability, if a certain length is planned. In addition, longitudinal slots are embedded in the feeding waveguide to lead away the oil during the compression of the cylinder. These speciﬁcations are considered for the design of the waveguide segments."
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "A",
+  "text": "Waveguide Design Considering Waveguide Modes"
+ },
+ {
+  "type": "para",
+  "text": "For high-accuracy measurements, mono-mode propagation has to be ensured. Multi-mode propagation would induce"
+ },
+ {
+  "type": "figure",
+  "num": "9",
+  "caption": "Electric ﬁeld distributions of the ﬁrst propagable modes in a circular waveguide. (a) TE11. (b) TM01. (c) TE21.",
+  "img": "img_journal/figure_9.png"
+ },
+ {
+  "type": "figure",
+  "num": "10",
+  "caption": "Cut-off frequency versus circular waveguide radius for the ﬁrst ﬁve propagation modes.",
+  "img": "img_journal/figure_10.png"
+ },
+ {
+  "type": "para",
+  "text": "different propagation velocities [28]. For the FMCW radar, this would result in different travelling times and, consequently, in a disturbed beat frequency, as presented by the authors in [8] and [32] for a level-measurement FMCW-radar system in an oversized waveguide. The inﬂuence of multi-mode propagation on the range measurement accuracy and compensation or utilization posibilities are explained in detail in these publications. Hence, the intended mono-mode approach for the hydraulic cylinder application provides advantages for the system performance, the system design and the system characterization. The electrical ﬁeld distributions of the ﬁrst three possible modes in a circular waveguide are shown in Fig. 9. The required mode is the rotational-symmetric TM01 mode Fig. 9(b). For this mode, it is not necessary to consider a speciﬁc E-ﬁeld distribution for the feeding structure. For analysis of modes which are capable to propagate in W1 and W2, the cut-off frequencies have to be considered. The cut-off frequencies of the ﬁrst ﬁve propagation modes for the averaged permittivity value ε′ r of 2.25 (see section IV) as a function of the waveguide diameters is shown in Fig. 10. The relevant system frequency range is from 23.5 GHz to 24.5 GHz. In cylindrical oil-ﬁlled waveguides a minimum radius of 3.3 mm is required to obtain the TM01 mode. To prevent the propagation of all higher modes, the highest occurring frequency of 24.5 GHz (radar frequency range marked by horizontal gray bar) must be below the cut-off frequency of the next higher mode (TE21). This is achieved for a radius smaller than 3.8 mm. Another mode capable of propagating in this radius range is the fundamental TE11 mode. This mode is eliminated by a proper input design (section V-C). Therefore, the radius of the feeding waveguide W1 is set to 3.5 mm, which is a"
+ },
+ {
+  "type": "figure",
+  "num": "11",
+  "caption": "Cut-off frequency versus oil permittivity for the ﬁrst three/ﬁve propagation modes in the feeding waveguide W1 and the drilled piston waveguide W2. (a) Propagation modes in W1. (b) Propagation modes in W2.",
+  "img": "img_journal/figure_11.png"
+ },
+ {
+  "type": "para",
+  "text": "common size for circular waveguides with a sufﬁcient wall thickness of 1 mm. The diameter of the piston drill hole W2 has to be larger than W1 to ensure the telescoped movement. In this case, a multi-mode scenario cannot be avoided. Due to the mechanical speciﬁcations, the radius of W2 is set to 5.5 mm. The propagating higher modes are TE21 and TM11/TE01 (same cut-off frequency). However, the rotationally symmetric structure with W1 positioned centrically in the drilled piston hole and monomode excitation in W1 prevents the excitation of or conversion to higher modes. In this way, the desired fundamental TM01 mode is the only excited mode (section V-B). The parameters for this application can be summarized as follows:"
+ },
+ {
+  "type": "para",
+  "text": "• radar frequency range: 23.5 GHz to 24.5 GHz • oil permittivity: 2.0 to 2.5 • waveguide diameter (W1): 7 mm • drilled piston hole diameter (W2): 11 mm Besides the mechanical realization of the waveguide structures, the inﬂuence of the permittivity on the propagation is of relevance. Mode propagation as a function of the permittivity is depicted in Fig. 11 for the relevant modes in W1 and W2 and the measured ε′ r range. In both waveguide segments the propagation of TM01 is not impeded at an oil permittivity smaller than 2.5. A permittivity smaller than 2.0 would impede the desired mode in W1 due to the increased wavelength. However, the measurements for the oil show a minimum permittivity above 2.1."
+ },
+ {
+  "type": "figure",
+  "num": "12",
+  "caption": "Normalized group velocity versus normalized wavelength for the measured permittivity range of oil in the feeding waveguide W1 and the drilled piston waveguide W2. (a) Normalized group velocity in W1. (b) Normalized group velocity in W2.",
+  "img": "img_journal/figure_12.png"
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "B",
+  "text": "Group Velocity and Dispersion"
+ },
+ {
+  "type": "para",
+  "text": "The radar principle for range detection requires exact knowledge of the propagation velocity. The inﬂuence of the frequency-dependent group velocities in a waveguide might lead to an error in the calculation. In this case, two waveguide segments with different diameters result in different group velocities. In addition, low dispersion is necessary when using frequency-modulated signals, i.e. deviation of the group velocity as a function of frequency needs to be ﬂat. This is simulated for the TM01 mode propagation in W1 (Fig.12(a)) and W2 (Fig.12(b)). The plots show the normalized propagation velocity vgr/c0 (c0 = free space propagation velocity) versus the normalized wavelength λ/λcut−of f (λcut−of f = wavelength of the cut-off frequency) for the frequency range between 22 GHz up to 26 GHz. The relevant frequency range of the radar (23.5 GHz–24.5 GHz) is marked by the gray bar."
+ },
+ {
+  "type": "table",
+  "num": "II",
+  "caption": "NORMALIZED DISPERSION FACTOR SIMULATION RESULTS",
+  "img": "img_journal/table_II.png"
+ },
+ {
+  "type": "para",
+  "text": "The permittivity is speciﬁed to range from 2.0 to 2.5. As expected, the dispersion in W1 is signiﬁcantly higher than in W2. An increased permittivity leads to a decreased dispersion gradient in both waveguides. For a detailed comparison the dispersion factor η = \u0006vgr/c0 over the radar bandwidth of 1 GHz is used. The simulation results for η as a function of oil permittivity ε′ r are summarized in table II. The dispersion factor η by about 5.5 % in W1 for the averaged permittivity of 2.25 is ﬁvefold higher than in W2. Additionally the variation \u0006η of 0.5 % for the measured ε′ r range is marginal compared to W2 with \u0006η = 6.97 %. However, only the propagation velocity in W2 is important for the radar due to the relative signal processing principle (see section I). The starting point for measurement is the calibration target, i.e. the transition between W1 and W2. The propagation velocity is set to 1.6302 ·108 m/s corresponding to a permittivity of ε′ r = 2.25 at the radar center frequency of 24 GHz. An inaccurate propagation velocity for the calculation will directly cause a constantly increasing error as a function of the target distance. These time-invariant errors, i.e. hardware or waveguide uncertainties, can be eliminated by a system calibration, whereas timevariant errors due to temperature effects or to variable oil characteristics because of contamination are calibrated during operation with the calibration target which is measured permanently in each measurement sequence. However, the dispersion in W1 show a considerable high dispersion for the relative small bandwidth of 1 GHz, if the dimension of the waveguide is not adapted to the used frequency range. Higher bandwidths will induce a more detailed investigation of the dispersion."
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "C",
+  "text": "Waveguide Transition Between W1 and W2"
+ },
+ {
+  "type": "para",
+  "text": "The target for calibration is located at a known position and hence, at a deﬁned distance. This is achieved by the transition from W1 to W2 (see section III). The reﬂection coefﬁcient at this point has to be high enough for a good detection regardless of the piston position. However, the reﬂection should not attenuate the transmission too much and it should not cover the signal reﬂected from the main target at the bottom of W2. The diameter difference between the waveguides W1 and W2 of 4 mm (see Fig. 13(a)) results in a large impedance step that causes a large reﬂection at this transition. The reﬂection coefﬁcient can be reduced by tapering the transition between W1 and W2. In [33]–[35] some general descriptions of well-known taper geometries are given. The realized taper of the waveguide segments over a distance of 5 mm is shown in Fig. 13(b). The simulated reﬂections over the frequency for both transitions depicted in Fig. 14 conﬁrm the high reﬂection (S11 abr. trans.) of about 3 dB, as indicated by the dash-dotted"
+ },
+ {
+  "type": "figure",
+  "num": "13",
+  "caption": "Transition between the feeding waveguide W1 and the drilled piston waveguide W2 without and with the realized taper. (a) Abrupt transition. (b) Tapered transition.",
+  "img": "img_journal/figure_13.png"
+ },
+ {
+  "type": "para",
+  "text": "Simulated S11 and S21 versus frequency for the realized transition"
+ },
+ {
+  "type": "figure",
+  "num": "14",
+  "caption": "Simulated S11 and S21 versus frequency for the realized transition between the feeding waveguide W1 and the drilled piston waveguide W1 without and with the realized taper.",
+  "img": "img_journal/figure_14.png"
+ },
+ {
+  "type": "para",
+  "text": "line for an abrupt transition. Hence, only half of the signal energy is transmitted into W2 and the reﬂection of the main target is deﬁnitely below the calibration target after crossing the transition twice. Detection of the main reﬂection at the end of W2 is not possible. A tapered transition ensures a sufﬁciently high reﬂection (S11 tap. trans.) of approximately −15 dB to −10 dB over the radar frequency range (vertical gray bar). The reﬂection from the main target remains undisturbed. The transmission (S21 tap. trans.) is almost neglible around 0 dB."
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "D",
+  "text": "Waveguide Feeding"
+ },
+ {
+  "type": "para",
+  "text": "A dedicated transition, i.e. a coaxial-to-waveguide adapter, is necessary to feed the RF-signal into the waveguide by transforming the coaxial TEM-mode on the feed line into the rotationally symmetric TM01 mode of the circular waveguide. Some general descriptions of transition methods are provided in the literature [36]–[38]. Here, a solution adapted to the hydraulic cylinder is required. The coaxial-towaveguide adapter taylored for this application is shown in the CAD-design and schematic representation in Fig. 15. The adapter which is connected to the highly compact radar sensor is directly integrated in the hydraulic cylinder. Consequently, the sensor parts are oil-tight, pressure-resistant, and temperature-stable. The material used for this purpose"
+ },
+ {
+  "type": "figure",
+  "num": "15",
+  "caption": "CAD-design and schematic representation of the realized coaxialto-waveguide adapter. (a) CAD-design. (b) Shematic-representation.",
+  "img": "img_journal/figure_15.png"
+ },
+ {
+  "type": "figure",
+  "num": "16",
+  "caption": "Female-to-female K-band SMA-adapter for the realized coaxial-towaveguide transition without system adaptation and with system adaptation including a PTFE-ﬁlled transition. (a) Air-ﬁlled SMA. (b) Teﬂon-ﬁlled SMA.",
+  "img": "img_journal/figure_16.png"
+ },
+ {
+  "type": "para",
+  "text": "is PEEK (Polyether Ether Ketone) with favorable mechanical characteristics at high temperatures. The entire feeding structure is a coaxial setup. A centric pin embedded in PEEK (Fig. 15(b), PEEK section) is used to excite the required mode in the waveguide. For prototyping, this pin is extended by a female-to-female SMA K-band adapter (Fig. 15(b), SMA section) to connect the SMA male output pin of the radar sensor. For this purpose, the femaleto-female adapter has to be adapted to the extended pin. The missing casing of the extended pin results in a diameter difference between the outer and inner air-ﬁlled casing of the SMA adapter and therefore, in an impedance mismatch (see Fig.15(b)) and Fig.16(a)). Another material of higher permittivity is suited to compensate the difference in impedance. For a standard SMA connector with an outer radius rout = 2.3 mm and inner radius rin = 0.65 mm the required permittivity for the given structure is"
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p7_R_583.png"
+ },
+ {
+  "type": "para",
+  "text": "Here, the frequency-constant material Polytetraﬂuoroethylene (PTFE) with a permittivity of 2.1 is used. An enhanced matching of better than 13 dB is theoretically achievable with this approach. The modiﬁed SMA adapter is shown in Fig. 16(b). The boundary conditions of the coaxial part with PEEK consist in an inner diameter of the waveguide W1 of 7 mm. It is extended to dPEEK = 7.2 mm in the PEEK section to force the PEEK into the cylinder deﬁning the outer radius of this part. For good matching to the SMA-connector, an impedance ZL of 50 \u000b is required. The dimension of the inner radius can"
+ },
+ {
+  "type": "figure",
+  "num": "17",
+  "caption": "Complex PEEK permittivity versus frequency measured by the CPM method. (a) Real part ε′r. (b) Imaginary part ε′′r .",
+  "img": "img_journal/figure_17.png"
+ },
+ {
+  "type": "para",
+  "text": "be calculated with"
+ },
+ {
+  "type": "equation",
+  "img": "img_journal/eq_p8_L_440.png"
+ },
+ {
+  "type": "para",
+  "text": "It is therefore necessary to characterize the permittivity ε′ r of the used PEEK. This is done with the CPM method, which was also used for the oil (see section IV-A). Fig. 17 presents the results of the CPM method as a function of the temperature for ε′ r and ε′′ r . The permittivity of the pure PEEK is between 2.8 and 3.4. The loss tangent is below the detection limit of the measurement method for the relevant temperature range. However, the permittivity ε′ PEEK corresponds to literature values [39]. Using the averaged permittivity of ε′ rPE E K = 3.2 and outer radius rout = dPEEK /2 = 3.6 mm, the radius of the pin is set to 0.81 mm. Apart from feeding optimization, the pin length is another important parameter for optimized matching. With the tolerances and mechanical characteristics taken into account, the optimization process using the transient solver of the 3-D EM software CST Microwave Studio yields a ratio of Pinlength/PEEKlength of approximately 0.9 to enclose the whole pin in oil with PEEK. The results in Fig. 18 exhibit a matching of better than 10 dB for the relevant frequency range. The transmission S21 is about 1.5 dB. Hence, most of the signal energy can be coupled into the waveguide. The simulations also show that the propagation-capable higher modes in the waveguide can be neglected. Hence, the desired TM01 Simulated S11 and S21 versus frequency for the realized coaxial-"
+ },
+ {
+  "type": "figure",
+  "num": "18",
+  "caption": "Simulated S11 and S21 versus frequency for the realized coaxialto-waveguide adapter with the TM01 mode.",
+  "img": "img_journal/figure_18.png"
+ },
+ {
+  "type": "para",
+  "text": "mode is propagating only. However, the inﬂuence of both PEEK permittivity as well as oil permittivity is signiﬁcant. The matching is improved by increasing ε′ rPE E K or increasing ε′ roil ."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "VI",
+  "text": "MEASUREMENT RESULTS"
+ },
+ {
+  "type": "para",
+  "text": "The Matlab-based measurement software controls the sampling of the beat signal with a National Instruments data acquisition card and the reference distance measurements systems. The data is evaluated ofﬂine. The achieved accuracy is veriﬁed by comparing the radar results with the reference system results. For this purpose a magnetostriction-based reference is used. Another magnetostriction sensor is part of the measurement setup for controlling the piston position. The entire measurement setup is shown in Fig. 19. The used hydraulic cylinder with the integrated prototype sensor components has an overall length of 1 m. The feeding waveguide W1 including the transition to W2, has a length of approximately 0.5 m. The bottom of the drill hole in the piston acting as radar target, or the moving part of the system for range detection is positioned in the middle of the drilled piston to minimize errors due to multiple reﬂections. The measurement distance is approximately 0.2 m and the minimum adjustable step of the movement control system is about 4 mm. With this setup, 50 positions can be reached. For statistics 50 measurement repetitions were carried out at every position. The used PLL-DDS (phase-locked loop - direct digital synthesis) -stabilized and FPGA-controlled radar sensor [40] has the following system parameters: • frequency range 23.5 GHz–24.5 GHz • bandwidth 1 GHz, • sweep time 500 μs In Fig. 20, three positions in the mentioned distance range are plotted in the frequency domain. The solid line represents the closest position, the dashed line the middle position, and the dotted line the position at the largest distance. The main reﬂections at the bottom of the piston at a frequency above 30 kHz are separated well from each other. The amplitude differences between these points separated by a distance of roughly 0.1 m are 2 dB. If related to 1 m and considering the half-length due to the evaluated radar reﬂection, an overall attenuation of 10 dB/m results in oil, which agrees very well"
+ },
+ {
+  "type": "figure",
+  "num": "19",
+  "caption": "K-band radar sensor with adapter board for connection and measurement setup, including reference distance measurement sensors. (a) Prototype radar sensor and coax-to-waveguide adapter. (b) Measurement setup.",
+  "img": "img_journal/figure_19.png"
+ },
+ {
+  "type": "para",
+  "text": "with the assumed value. As expected, the calibration target is about 8 dB below the main targets and ﬁxed at a frequency of 24.8 kHz for all positions. The corresponding length including the taper, i.e. the exact position of the calibration target in the cylinder is known. Therefore, the absolute position of the radar target (piston position) can be obtained by the difference in frequency between the calibration taget and the corresponding frequency of the measurement positions. Thus, absolute measurements after system start and calibration during operation are possible. For instance an absolute position of 0.814 m is evaluated for the starting point of the realized measurement. Statistically analysis over the measurement repetitions is summarized in table III. The mean values μ and the 3σ deviation for the frequency and for the phase are evaluated for the complete distance with all positions (2500 measurement values). Additionally, the minimum and the maximum 3σ deviation are listed for 50 measurement repetitions at the initiated positions. Considering the marginal variations over the whole measurement distance, it can be stated that this transition provides for an adequate calibration."
+ },
+ {
+  "type": "figure",
+  "num": "20",
+  "caption": "Beat signal in the frequency domain for three measurement positions in the realized measurement setup.",
+  "img": "img_journal/figure_20.png"
+ },
+ {
+  "type": "table",
+  "num": "III",
+  "caption": "MEASUREMENT RESULTS FOR THE TRANSITION",
+  "img": "img_journal/table_III.png"
+ },
+ {
+  "type": "figure",
+  "num": "21",
+  "caption": "Measurement results obtained from evaluation with frequency and phase estimation without and with calibration of inaccurate FMCW parameters.",
+  "img": "img_journal/figure_21.png"
+ },
+ {
+  "type": "para",
+  "text": "The accuracy required for the coarse detection is reached over the entire measurement distance using the CZT. The extended evaluation of the phase improves the entire performance. The measurment results for the combined evalution of coarse and ﬁne detection are shown in Fig. 21. The solid curve shows the measurement results without calibration, resulting in increased errors due to inaccurate FMCW parameters, as described in section V-B. The calibrated dotted line reveals an accuracy of approximately 0.2 mm. The higher impact of the FMCW parameters at longer distances on the combined evaluation results of coarse and ﬁne detection is obvious in this plot. As the entire range is subdivided into segments in the order of the phase unambiguity, the errors caused by wrong parameters are sum up at longer ranges. The accuracy results are refered to the magnetostriction sensor."
+ },
+ {
+  "type": "figure",
+  "num": "22",
+  "caption": "Distribution function and cumulative distribution function of the measurement errors. (a) Distribution function. (b) Cumulative distribution function.",
+  "img": "img_journal/figure_22.png"
+ },
+ {
+  "type": "para",
+  "text": "The offset of the absolute position is eliminated in these plots to compare the radar results with the reference sensor. Fig. 22(a) of 180 μm over all measurements (2500 measurement values). According to cumulative summing Fig. 22(b), this accuracy is met in 99% of the measurement repetitions."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "VII",
+  "text": "CONCLUSION"
+ },
+ {
+  "type": "para",
+  "text": "Many industrial applications require highly precise distance measurement or position detection sensors. Inexpensive sensor solutions are in great demand in the ﬁeld of hydraulic cylinders in particular, thus resulting in a huge market potential. The waveguide-based K-band radar sensor described here represents a promising solution for applications, in which other distance measurement sensors reach their limits. It reaches an accuracy of better than 200 μm and is small, ﬂexible, inexpensive, highly precise and, directly integrable into the hydraulic cylinder. The mode propagation in the oil-ﬁlled cylindrical waveguide is investigated. For this purpose, the dielectric propagation medium oil in the hydraulic system is characterized by permittivity measurement methods. The measurement results show a good agreement with literature values for comparable oils. The veriﬁed attenuation of 10 dB/m by NWA and radar measurements justify the sensor concept in this application. Apart from analysis of the propagation, adapted feeding and transition structures with respect to mechanical and electrical requirements are designed. The oil-tight, pressure-resistant coaxial-to-waveguide adapter provides good coupling into the cylinder and the tapered transition between the two waveguide segments enables a new form of calibration, and absolute position detection during operation. In the future, the algorithms will be optimized and implemented on a low-cost FPGA for the execution of realtime measurements. Use of higher frequencies is considered to improve the accuracy of the sensor (up to submicron precision) and to achieve a higher integration factor. Thus, new applications, e.g. machine tools can be covered, where high accuracy range detection is required. In these applications the waveguide dimensions are not limited by speciﬁc requirements as given in the hydraulic cylinder, so that standard waveguides can be used. In addition to cylindrical waveguides also rectangular ones are conceivable, depending mainly on the application and how an adaptive integration is feasible."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "",
+  "text": "ACKNOWLEDGMENT"
+ },
+ {
+  "type": "para",
+  "text": "The authors would like to thank the project partner Novotechnik Messwertaufnehmer OHG for manufacturing the hydraulic cylinder and the measurement setup with piston position control and referencing. The authors also thank the project partner InnoSenT GmbH for the close cooperation during the development and optimization process of the radar sensor and for providing the radar samples."
+ },
+ {
+  "type": "references",
+  "items": [
+   "[1] Micro-Epsilon. (2013, Jan.). More Precision. Indusensor—Linear Induc- tive Displacement Sensors, Novi, MI, USA [Online]. Available: http://www.micro-epsilon.co.uk/download/products/ Position",
+   "[2] Novotechnik Messwertaufnehmer OHG. (2013, Nov.). Transducers and Rotary Sensors Non-Contacting, Touch- less, Potentiometric, Stuttgart, Germany [Online]. Available: http://www.novotechnik.de/de/download/kataloge/",
+   "[3] J. Hasch, E. Topak, R. Schnabel, T. Zwick, R. Weigel, and C. Wald- schmidt, “Millimeter-wave technology for automotive radar sensors in the 77 GHz frequency band,” IEEE Trans. Microw. Theory Tech., vol. 60, no. 3, pp. 845–860, Mar. 2012.",
+   "[4] J. Wenger, “Automotive radar—Status and perspectives,” in Proc. IEEE CSIC, Nov. 2005, pp. 1–7. Federal Network Agency for Electricity and Gas and",
+   "[5] (2012). Telecommunication and Post and Railway [Online]. Available: http://www.bundesnetzagentur.de Commission. (2012). Federal Communi-",
+   "[6] Federal Communications cations Commission, Washington, DC, USA [Online]. Available: http://www.fcc.gov",
+   "[7] Electronic Communications Committee. (2013, Feb.). The European Table of Frequency Allocations and Applications in the Frequency Range 8.3 kHz to 3000 GHz [Online]. Available: http://www.erodocdb.dk/",
+   "[8] T. Musch, N. Pohl, M. Gerding, B. Will, J. Hausner, and B. Schiek, “Radar distance measurements in over-sized circular waveguides,” in Proc. 36th Eur. Microw. Conf., 2006, pp. 1036–1039.",
+   "[9] M. Gerding, T. Musch, and B. Schiek, “A novel approach for a high- precision multitarget-level measurement system based on time-domain reﬂectometry,” IEEE Trans. Microw. Theory Tech., vol. 54, no. 6, pp. 2768–2773, Jun. 2006.",
+   "[10] S.-J. Ji, W.-J. Choi, K.-Y. Kim, and J.-T. Lee, “A study on the precise distance measurement for radar level transmitter of FMCW type using correlation analysis method,” in Proc. Joint 6th Int. Conf. SCIS Adv. Joint 6th Int. Conf. Symp. SCIS, Nov. 2012, pp. 2009–2014.",
+   "[11] G. Wang, C. Gu, J. Rice, T. Inoue, and C. Li, “Highly accurate non- contact water level monitoring using continuous-wave Doppler radar,” in Proc. IEEE Topical Conf. WiSNet, Jan. 2013, pp. 19–21.",
+   "[12] S. Ayhan, S. Scherr, M. Pauli, and T. Zwick, “FMCW radar in oil- ﬁlled waveguides for range detection in hydraulic cylinders,” in Proc. 9th EuRAD, 2012, pp. 63–66. Radar Handbook,",
+   "[13] M. Skolnik, 2nd ed. New York, NY, USA: Knovel, 2003.",
+   "[14] G. Woods, D. Maskell, and M. Mahoney, “A high accuracy microwave ranging system for industrial applications,” IEEE Trans. Instrum. Meas., vol. 42, no. 4, pp. 812–816, Aug. 1993.",
+   "[15] A. Stelzer, C. Diskus, K. Lubke, and H. Thim, “A microwave position sensor with submillimeter accuracy,” IEEE Trans. Microw. Theory Tech., vol. 47, no. 12, pp. 2621–2624, Dec. 1999.",
+   "[16] S. Max, M. Vossiek, and P. Gulden, “Fusion of FMCW secondary radar signal beat frequency and phase estimations for high precision distance measurement,” in Proc. Radar Conf. EuRAD, 2008, pp. 124–127.",
+   "[17] S. Ayhan, M. Pauli, T. Kayser, S. Scherr, and T. Zwick, “FMCW radar system with additional phase evaluation for high accuracy range detection,” in Proc. EuRAD, 2011, pp. 117–120.",
+   "[18] F. Barbon, G. Vinci, S. Lindner, R. Weigel, and A. Koelpin, “Signal processing strategies for six-port based direction of arrival detector systems,” in Proc. 9th Int. Multi-Conf. SSD, 2012, pp. 1–5.",
+   "[19] Q. Guoqing, “High accuracy range estimation of FMCW level radar based on the phase of the zero-padded FFT,” in Proc. 7th Int. Conf. ICSP, vol. 3. 2004, pp. 2078–2081.",
+   "[20] P. Pahl, T. Kayser, M. Pauli, and T. Zwick, “Evaluation of a high accuracy range detection algorithm for FMCW/phase radar systems,” in Proc. EuRAD, 2010, pp. 160–163.",
+   "[21] L. Rabiner, R. Schafer, and C. Rader, “The chirp z-transform algorithm,” IEEE Trans. Audio Electroacoust., vol. 17, no. 2, pp. 86–92, Jun. 1969.",
+   "[22] R. Roy and T. Kailath, “Esprit-estimation of signal parameters via rotational invariance techniques,” IEEE Trans. Acoust., Speech Signal Process., vol. 37, no. 7, pp. 984–995, Jul. 1989.",
+   "[23] S. Scherr, S. Ayhan, M. Pauli, and T. Zwick, “Accuracy limits of a K-band FMCW radar with phase evaluation,” in Proc. Radar Conf. 9th EuRAD, 2012, pp. 246–249.",
+   "[24] M. Pauli, T. Kayser, and W. Wiesbeck, “A versatile measurement system for the determination of dielectric parameters of various materials,” Meas. Sci. Technol., vol. 18, no. 4, pp. 1046–1053, 2007.",
+   "[25] Agilent. (2013, Apr.). Measuring Dielectric Properties Using Agilent Materials Measurement Solutions, Santa Clara, CA, USA [Online]. Available: http://cp.literature.agilent.com/ litweb/pdf/ 5991-2171EN.pdf",
+   "[26] V. Komarov, S. Wang, and J. Tang, “Permittivity and measurements,” in Encyclopedia of RF and Microwave Engineering. New York, NY, USA: Wiley, 2005. Agilent 85070e Dielectric Probe kit",
+   "[27] Agilent. (2012, Jun.). 200 MHz to 50 GHz, Santa Clara, CA, USA [Online]. Available: http://cp.literature.agilent.com/litweb/pdf/5989-0222EN.pdf",
+   "[28] D. M. Pozar, Microwave Engineering, 3rd ed. New York, NY, USA: Wiley, 2005.",
+   "[29] O. Ogunlade, R. D. Pollard, and I. Hunter, “A new method of obtaining the permittivity of liquids using in-waveguide technique,” IEEE Microw. Wireless Compon. Lett., vol. 16, no. 6, pp. 363–365, Jun. 2006.",
+   "[30] Y. C. Lan, S. Q. Men, X. Y. Xu, and K. Q. Lu “Experimental study of dielectric constant inﬂuence on electrorheological effect,” J. Phys. D, Appl. Phys., vol. 33, no. 10, pp. 1239–1242, 2007.",
+   "[31] A. A. Carey, The Dielectric Constant of Lubrication Oils. Cleveland, OH, USA: CRC press, 1995.",
+   "[32] N. Pohl, M. Gerding, B. Will, T. Musch, J. Hausner, and B. Schiek, “High precision radar distance measurements in overmoded circular waveguides,” IEEE Trans. Microw. Theory Tech., vol. 55, no. 6, pp. 1374–1381, Jun. 2007.",
+   "[33] H. Flugel and E. Kuhn, “Computer-aided analysis and design of circular waveguide tapers,” IEEE Trans. Microw. Theory Tech., vol. 36, no. 2, pp. 332–336, Feb. 1988.",
+   "[34] W. Huting and K. Webb, “Numerical analysis of rectangular and circular waveguide tapers,” IEEE Trans. Magn., vol. 25, no. 4, pp. 3095–3097, Jul. 1989.",
+   "[35] F. Sporleder and H.-G. Unger, Waveguide Tapers, Transitions and Couplers. London, U.K.: Peter Peregrinus Ltd., 1979.",
+   "[36] Q. Zhu, A. Williamson, and M. Neve, “Design of coaxial line-to- circular waveguide transitions,” in Proc. IEEE MTT-S Int. Microw. Symp., Jun. 2009, pp. 265–268.",
+   "[37] R. MacPhie, M. Opie, and C. R. Ries, “Input impedance of a coaxial line probe feeding a circular waveguide in the TM01 mode,” IEEE Trans. Microw. Theory Tech., vol. 38, no. 3, pp. 334–337, Mar. 1990.",
+   "[38] R. E. Collin, Field Theory of Guided Waves. New York, NY, USA: McGraw-Hill, 1960.",
+   "[39] T. Kobayashi and Y. Nikawa, “Dynamic measurement of temperature dependent permittivity of liquid material using microwaves,” in Proc. APMC, 2010, pp. 1368–1371.",
+   "[40] S. Ayhan, V. Vu-Duy, P. Pahl, S. Scherr, M. Hubner, J. Becker, et al., “FPGA controlled DDS based frequency sweep generation of high linearity for FMCW radar systems,” in Proc. 7th GeMiC, 2012, pp. 1–4. Serdal Ayhan was born in Nußloch, Germany, 1981. He received the Dipl.-Ing. (FH) degree in communi- cations and electronics and the M.Sc. degree in infor- mation technology from the Mannheim University of Applied Sciences, in Germany, in 2009 and 2010, respectively. He is currently pursuing the Ph.D. degree in radar technology at the Karsruher Institute of Technolgy (KIT) at the Institut für Hochfre- quenztechnik und Elektronik (IHE) in Karslruhe, Germany. Steffen Scherr (M’09) was born in Speyer, Ger- many, in 1985. He received the Dipl.-Ing. degree in electrical engineering (M.S.E.E.) from the Univer- sität Karlsruhe (TH), Karlsruhe, Germany, in 2010. His main areas of research interest are system design and digital signal processing for radar systems, espe- cially for FMCW radar systems. Philipp Pahl was born in Mannheim, Germany, in 1982. He studied electrical engineering at the Karlsruhe Institute of Technology (KIT), Germany, where he graduated in 2008. While working on the M.S.E.E. degree at the Fraunhofer Institute for Applied Solid-State Physics, Freiburg, Germany, he developed power ampliﬁers at high millimetre- wave (mmW) frequencies. He currently works as a Research Associate and Teaching Assistant at the KIT, where he is involved in mmW circuit design and radar signal processing. Thorsten Kayser was born in Mannheim, Ger- many, in 1972. He received the Dipl.-Ing. degree in electrical engineering from the Technische Uni- versitaet Karlsruhe, Germany, in 2002 and the Dr.- Ing. degree from the Karlsruhe Institute of Technol- ogy, Germany, in 2011. Since 2011, he has been a Research Assistant at the Institute for Pulsed Power and Microwave Technology (IHM), Karlsruhe Institute for Technology (KIT), Karlsruhe, Germany. His current research interests comprise high power microwave applications and electromagnetic ﬁeld theory. Mario Pauli (M’04) was born in Lahr, Germany in 1975. He received the Dipl.-Ing. (M.S.E.E.) degree in electrical engineering from the Universität Karlsruhe, Germany, in and the Dr.- Ing. (Ph.D.E.E.) from the Karlsruhe Institute of Technolgy in 2011. In 2002, he spent four months as an Intern at the IBM T. J. Watson Research Center, Yorktown Heights, NY, USA, working on time and frequency domain measurement systems for the characterization of the 60 GHz indoor radio channel. From 2004 to 2011, he has been with the Institut für Höchstfrequenztechnik und Elektronik, Universität Karlsruhe, as a Research Assistant. Since 2011, he has been with the Institut für Hochfrequenztechnik und Elektronik, Karlsruhe Institute of Technology as a Research Associate. His research topics include electromagnetic ﬁeld theory, radar and sensor systems, antennas, millimeter wave packaging and microwave heating. For the Carl Cranz Series for Scientiﬁc Education he serves as a Lecturer for radar and smart antennas. He is co-founder and managing director of the PKTEC GmbH. Thomas Zwick (S’95–M’00–SM’06) received the Dipl.-Ing. (M.S.E.E.) and the Dr.-Ing. (Ph.D.E.E.) degrees from the Universität Karlsruhe (TH), Ger- many, in 1994 and 1999, respectively. From 1994 to 2001, he was a Research Assistant at the Institut für Höchstfrequenztechnik und Elektronik (IHE), Universität Karlsruhe (TH), Germany. In February 2001, he joined IBM as a Research Staff Member at the IBM T. J. Watson Research Center, York- town Heights, NY, USA. From October 2004 to September 2007, he was with Siemens AG, Lindau, Germany. During this period he managed the RF development team for automotive radars. In October 2007, he became a Full Professor at the Karlsruhe Institute of Technology (KIT), Germany. He is the Director of the Institut für Hochfrequenztechnik und Elektronik (IHE) at the KIT. He is author or co-author of over 200 technical papers and 20 patents. His research topics include wave propagation, stochastic channel modeling, channel measurement techniques, material measurements, microwave techniques, millimeter wave antenna design, wireless communication and radar system design. Thomas Zwick received over 10 best paper awards on international conferences. He served on the technical program committees (TPC) of several scientiﬁc conferences. In 2013, he was general TPC Chair of the International Workshop on Antenna Technology (iWAT 2013). He also is TPC Chair of the European Microwave Conference (EuMC) 2013. Since 2008, he has been the President of the Institute for Microwaves and Antennas (IMA). He was selected as a Distinguished Microwave Lecturer for the 2013–2015 period with his lecture on “QFN Based Packaging Concepts for Millimeter-Wave Transceivers.”"
+  ]
+ }
+]

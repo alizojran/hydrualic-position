@@ -1,0 +1,6 @@
+# Regenerable artifacts (recreated by extract2.py / build_docx2.py)
+img_journal/
+img_conf/
+__pycache__/
+*.docx
+*.pdf

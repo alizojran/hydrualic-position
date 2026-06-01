@@ -1,0 +1,186 @@
+[
+ {
+  "type": "title",
+  "text": "FMCW Radar in Oil-filled Waveguides for Range Detection in Hydraulic Cylinders"
+ },
+ {
+  "type": "authors",
+  "text": "Serdal Ayhan1, Steffen Scherr, Mario Pauli and Thomas Zwick\nKarlsruhe Institute of Technology (KIT)\nInstitut für Hochfrequenztechnik und Elektronik (IHE)\nKaiserstraße 12, D-76131 Karlsruhe, Germany\n1serdal.ayhan@kit.edu"
+ },
+ {
+  "type": "abstract",
+  "text": "Highly precise distance measurement sensors are essential in the field of industrial automation. In particular hydraulic cylinder applications require an accurate detection of the piston position by reason of controlling and monitoring. Currently used external as well as integrated solutions are limited by many factors. Using low-cost and precise radar sensors is a highly promising approach for these applications. In this paper a K-band FMCW radar sensor is used to detect the position of the piston in a hydraulic cylinder with a guided propagation of the radar signal. Requirements for this new approach are described and verified under real measurement conditions. The achieved accuracy for a 1 m hydraulic cylinder is well below 200 µm at a measurement repetition rate of 2 kHz."
+ },
+ {
+  "type": "indexterms",
+  "text": "FMCW radar, oil-filled waveguide, range detection, high accuracy, industrial application."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "I",
+  "text": "INTRODUCTION"
+ },
+ {
+  "type": "para",
+  "text": "Distance measurement techniques in the field of hydraulic cylinders are required to determine the accurate position of the piston by reason of control aspects as needed for example in automatisation, hydraulic shovels or construction machines. External sensors for these applications have disadvantages. They lead to an increased mounting form, are more sensitive to environmental influences and have difficult accessibility in case of electronic failure. Existing internal sensors have resolution and dynamic limitations and are high in price compared to the external ones. Robust range detection sensors with high accuracy, independent of environmental influences and non-wearing, contactless function are in great demand in fluid technology. The innovative radar based range detection system in this work provides a smart integrated sensor solution in a hydraulic cylinder with high accuracy. Microwave radar sensors, in combination with waveguides for enclosed wave propagation, minimize external distortions and offer measurement possibilities in fluids such as oil. Short wavelengths at high frequencies allow high integrated sensor realizations with micrometer precision using phase evaluation methods. Due to the wide deployment of the radar technique, (e.g. in the automotive sector for driver assistance systems) prices for high frequency components decrease constantly. Therefore comparatively low cost sensors can be developed. After an introduction of the basic radar sensor approach in a hydraulic cylinder, software as well as hardware aspects are described and verified with real measurement results in the applied measurement setup."
+ },
+ {
+  "type": "figure",
+  "num": "1",
+  "caption": "FMCW radar sensor for hydraulic cylinder application",
+  "img": "img_conf/figure_1.png"
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "II",
+  "text": "RADAR PRINCIPLES FOR RANGE DETECTION"
+ },
+ {
+  "type": "para",
+  "text": "In radar based measurement methods the fundamental principle is to detect the time difference between the transmitted and the received radar signal, which is reflected from the measured object. Depending on the transmitted signal form three basic radar principles can be listed: the pulse-, the CW- (Continuous Wave) and the FMCW(Frequency Modulated Continuous Wave) method. Due to the limited bandwidth and the relatively high dispersion within a waveguide, pulse radar is not feasible with the required accuracy in the hydraulic cylinder. CW radar with a fixed transmit frequency offers the possibility to determine positions with μm precision. However, CW radars suffer from a small unambiguous range of half a wavelength of the radar signal. In an oil-filled waveguide, using a 24 GHz radar system only targets at distances up to 4.2 mm can be detected."
+ },
+ {
+  "type": "para",
+  "text": "An FMCW radar is particularly suitable for this application because it combines a long range detection capability with moderate precision. In an FMCW approach the frequency of the transmitted signal varies over time. Hence, the time difference between transmitted and received signal is proportional to the beat frequency [1] at the mixer output. However, due to the non-ideal hardware additional unwanted reflections cannot be excluded resulting in a disturbed beat signal with additional spectral components. In this case an increased frequency resolution is achievable with a larger bandwidth. However this is limited by the hardware. By a proper determination of the beat frequency an accuracy of several mm but not µm over a large distance is possible. In conclusion FMCW cannot be used alone in a distance measuring sensor with long range and high accuracy. Hence, a combination of FMCW and CW method as described in [2] is implemented. This method is divided into a coarse and a fine detection of the position. For the coarse detection the FMCW principle is used. Next the phase of the beat frequency is evaluated for a highly accurate position within the unambiguous range of the phase."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "III",
+  "text": "RANGE DETECTION IN OIL-FILLED WAVEGUIDES USING FMCW"
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "A",
+  "text": "Measurement Principle"
+ },
+ {
+  "type": "para",
+  "text": "The new approach in this work is to detect the range of the target, in this case the position of the piston in the hydraulic cylinder, by evaluating the reflected electromagnetic wave in a circular waveguide. The radar signal is fed from the sensor into the drilling within the piston via a smaller circular waveguide (W1). The diameter of W1 is several mm smaller than the drilling in the piston (W2), resulting in different wave impedances of W1 and W2. This step in the wave impedance is used as calibration target to account for changing propagation conditions, e.g. different oils, temperature and so on. Furthermore a reference position is required because of the relative measurement principle combining frequency and phase evaluation. The calibration target, set as starting point, can be used for this purpose. The bottom of the piston drilling acts as target for the detection of the position."
+ },
+ {
+  "type": "figure",
+  "num": "2",
+  "caption": "Sensor concept and measurement principle in hydraulic cylinders",
+  "img": "img_conf/figure_2.png"
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "B",
+  "text": "Waveguide Modes"
+ },
+ {
+  "type": "para",
+  "text": "Besides the radar technology and the signal processing requirements also the propagation in a waveguide is significant. The specified parameters for this application are as follows:  Frequency range: 23.5 GHz to 24.5 GHz  Oil permittivity: 1.8 to 3.0  Waveguide diameter (W1): 7 mm  Drilled piston hole diameter (W2): 11 mm For high accuracy measurements monomode propagation has to be ensured. Multimode propagation would induce different propagation velocities [3]. Therefore in an FMCW radar different propagation times and consequently a disturbed beat signal frequency will be the result. For analysis of modes which are capable to propagate in W1 and W2, the cut-off frequencies as a function of the oil permittivity has to be considered. In Fig. 3 the first three possible modes in W1 are shown. The required mode is the rotational-symmetric TM01 mode. The goal is to prevent the propagation of all higher modes. This is given if the highest occurring frequency, in this case 24.5 GHz, is below the cut-off frequency of the next higher mode (TE21). This is met for an oil permittivity smaller than 3. A permittivity smaller than 2.1 would impede the desired mode due to the increased wavelength. However, the oil used for measurements in the hydraulic cylinder has a permittivity higher than 2.1 and verifies the propagation of this mode. One more mode which is capable to propagate is the fundamental TE11 mode. This mode can be eliminated with a proper input design."
+ },
+ {
+  "type": "figure",
+  "num": "3",
+  "caption": "Frequency versus oil permittivity for the first 3 capable propagation modes in the sensor waveguide W1",
+  "img": "img_conf/figure_3.png"
+ },
+ {
+  "type": "para",
+  "text": "The first five relevant modes in W2 are plotted in Fig. 4. In this case theoretically a multimode scenario cannot be avoided due to mechanical reasons. The rotationally symmetric structure with W1 positioned centrically in the drilled piston hole avoids the propagation of higher modes. Only the desired fundamental TM01 mode is excited."
+ },
+ {
+  "type": "figure",
+  "num": "4",
+  "caption": "Frequency versus oil permittivity for the first 5 capable propagation modes in the drilled piston waveguide W2",
+  "img": "img_conf/figure_4.png"
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "C",
+  "text": "Group Velocity"
+ },
+ {
+  "type": "para",
+  "text": "For a position evaluation using the radar principle exact knowledge about the propagation velocity is necessary. The influence of the frequency-dependent group velocities in a waveguide might lead to an error in the calculation. In this case two waveguide segments with different diameters result in different group velocities. In addition low dispersion is necessary using frequency modulated signals, i.e. the group velocity as a function of frequency needs a flat deviation in the considered frequency range. The plotted group velocities of the TM01 mode in Fig. 5 for the two segments illustrate both aspects: different group velocities and high dispersion in W1. However the calibration and relative signal processing method solves this problem. For position detection only the TM01 group velocity in W2 with small dispersion can be used."
+ },
+ {
+  "type": "figure",
+  "num": "5",
+  "caption": "Group velocity versus frequency for the sensor waveguide W1 and the drilled piston hole waveguide W2",
+  "img": "img_conf/figure_5.png"
+ },
+ {
+  "type": "heading",
+  "level": 2,
+  "num": "D",
+  "text": "Feeding and Transition of Waveguide Segments"
+ },
+ {
+  "type": "para",
+  "text": "A dedicated transition, e.g. a coax-to-waveguide adapter is necessary to feed the RF-signal into the waveguide. In doing so the TEM-mode on the feed line is transformed into the rotationally symmetric TM01 mode of the circular waveguide."
+ },
+ {
+  "type": "para",
+  "text": "The sensor electronics including the transition adapter are realized highly compact to allow an integration into the hydraulic cylinder. All sensor parts which are in contact with fluid are oil-tight, pressure resistant and temperature stable. Unwanted reflections of the transition are eliminated by a proper design of the adapter. This is essential for the radar system, since input reflections may cause interference and multiple targets. The attenuation of the electromagnetic waves in oil at aimed distances of a few meters is small enough to provide radar measurements in this medium. The diameter difference between W1 and W2 of 4 mm results in a large impedance step, consequently in a large reflection at this transition. The main reflection at the bottom of W2 cannot be detected. Therefore, the transition between W1 and W2 is tapered from 7 mm to 11 mm over a distance of 5 mm to reduce the reflection coefficient. In doing so a sufficient high reflection of approximately -8 dB to -6 dB is ensured without disturbing the reflection of the main target."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "IV",
+  "text": "MEASUREMENT SETUP AND RESULTS"
+ },
+ {
+  "type": "para",
+  "text": "The measurement setup is shown in Fig. 6. It consists of a hydraulic cylinder with an overall length of 1 m. Two reference measurement systems based on magnetostriction are integrated. One reference is used to verify the acquired position information by the radar sensor. The second one controls the position of the piston. The radar signal is fed into the waveguide with the described coaxial-to-waveguide adapter with a bandwidth of more than 2 GHz around the 24 GHz center frequency. The developed measurement software is implemented in Matlab and controls the radar system as well as the reference measurement systems. The beat frequency is sampled with a National Instruments Data Acquisition Card. The evaluation of the data is carried out offline. The used PLL (phase locked loop) stabilized DDS (direct digital synthesis) controlled radar sensor ensures a bandwidth of 1 GHz and a sweep time of 500 µs with a very linear frequency ramp for the FMCW method [2]."
+ },
+ {
+  "type": "figure",
+  "num": "6",
+  "caption": "Measurement setup",
+  "img": "img_conf/figure_6.png"
+ },
+ {
+  "type": "para",
+  "text": "The length of the entire measured distance is 50 mm and the step size of the piston is set to approximately 5 mm. At every point the measurement is repeated for 50 times. The results for a range detection based on the evaluation of the beat frequency (coarse detection) and of the combined algorithm (fine detection) [2] are shown in Fig. 7. Using only the frequency information shows an accuracy of about 1.4 mm. By extending the radar with a phase evaluation the accuracy is improved considerably to 200 µm. Statistical analyses have shown that this accuracy is met in 99 % of the measurement repetitions."
+ },
+ {
+  "type": "figure",
+  "num": "7",
+  "caption": "Measurement results for coarse and fine detection",
+  "img": "img_conf/figure_7.png"
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "V",
+  "text": "CONCLUSION"
+ },
+ {
+  "type": "para",
+  "text": "Highly precise distance measurement or position detection sensors are required in a wide area of industrial applications. The non-existence of low-cost sensor solutions especially in the field of hydraulic cylinders constitutes a huge market potential. Besides of this a lot of different application scenarios for radar based sensors are published, e.g. stand-off detection of vital signs for medical applications [4] or level measurement of substances in tanks [5]. The described radar approach by using waveguides is a very promising solution for applications where other distance measurement sensors suffer. The small, flexible, low-cost and high precise K-band radar sensor achieves an accuracy of better than 200 µm. The results verify  the expected mode propagation in the multimode capable oil-filled cylindrical waveguide,  the feeding structure with a proper coaxial-towaveguide adapter,  the tapered transition between the two waveguide segments that can be simultaneously used as calibration target."
+ },
+ {
+  "type": "para",
+  "text": "In a next step the setup will be mechanically enhanced for an optimized wave propagation and reflection behavior. Furthermore, the algorithms will be improved and implemented on a low cost FPGA to allow for real time measurements. The use of higher frequencies is currently investigated to improve the accuracy of the sensor (up to submicron precision) and to allow an even higher integration factor."
+ },
+ {
+  "type": "heading",
+  "level": 1,
+  "num": "",
+  "text": "ACKNOWLEDGMENT"
+ },
+ {
+  "type": "para",
+  "text": "The authors would like to thank the project partner Novotechnik Messwertaufnehmer OHG for manufacturing the hydraulic cylinder with the integrated waveguide components and for realizing the measurement setup with controlling and referencing of the piston position."
+ },
+ {
+  "type": "references",
+  "items": [
+   "[1] M. Skolnik, Radar handbook, 2nd ed., Norwich, NY: Knovel, 2003.",
+   "[2] S. Ayhan, M. Pauli, T. Kayser, S. Scherr, and T. Zwick, “FMCW Radar System with Additional Phase Evaluation for High Accuracy Range Detection,” European Radar Conference, Oct. 2011.",
+   "[3] D. M. Pozar, Microwave Engineering, 3rd ed., USA, New Jersey: John Wiley and Sons, Inc., 2005.",
+   "[4] D. T. Petkie, C. Benton, and E. Bryan, “Remote respiration and heart rate monitoring with millimeter-wave/ terahertz radars,” in Proceedings of the Radar Conference, Pasadena, 2009.",
+   "[5] T. Musch, N. Pohl, B. W. M. Gerding, J. Hausner, and B. Schiek, “Radar distance measurements in over-sized circular waveguides,” in Proceedings of the European Microwave Conference, Manchester, 2006."
+  ]
+ }
+]
